@@ -1,10 +1,10 @@
-import unittest
+from unittest import TestCase
 
 from messaging.sms.udh import UserDataHeader
 from messaging.utils import to_array
 
 
-class TestUserDataHeader(unittest.TestCase):
+class TestUserDataHeader(TestCase):
 
     def test_user_data_header(self):
         data = to_array("08049f8e020105040b8423f0")

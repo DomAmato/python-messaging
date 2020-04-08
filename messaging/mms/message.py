@@ -430,7 +430,7 @@ class MMSMessagePage:
         self.duration = duration
 
 
-class DataPart(object):
+class DataPart:
     """
     I am a data entry in the MMS body
 

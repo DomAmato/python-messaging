@@ -1,7 +1,7 @@
 # See LICENSE
 
 
-class PortAddress(object):
+class PortAddress:
 
     def __init__(self, dest_port, orig_port, eight_bits):
         self.dest_port = dest_port
@@ -13,7 +13,7 @@ class PortAddress(object):
         return "<PortAddress dest_port: %d orig_port: %d>" % args
 
 
-class ConcatReference(object):
+class ConcatReference:
 
     def __init__(self, ref, cnt, seq, eight_bits):
         self.ref = ref
@@ -26,7 +26,7 @@ class ConcatReference(object):
         return "<ConcatReference ref: %d cnt: %d seq: %d>" % args
 
 
-class UserDataHeader(object):
+class UserDataHeader:
 
     def __init__(self):
         self.concat = None

@@ -17,12 +17,12 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """Unittests for the gsm encoding/decoding module"""
 
-import unittest
+from unittest import TestCase
 import messaging.sms.gsm0338  # imports GSM7 codec
 
 # Reversed from: ftp://ftp.unicode.org/Public/MAPPINGS/ETSI/GSM0338.TXT
 MAP = {
-#    unichr(0x0000): (0x0000, 0x00),  # Null
+#    chr(0x0000): (0x0000, 0x00),  # Null
     u'@': (0x0040, 0x00),
     u'£': (0x00a3, 0x01),
     u'$': (0x0024, 0x02),
@@ -33,10 +33,10 @@ MAP = {
     u'ì': (0x00ec, 0x07),
     u'ò': (0x00f2, 0x08),
     u'Ç': (0x00c7, 0x09),  #   LATIN CAPITAL LETTER C WITH CEDILLA
-    unichr(0x000a): (0x000a, 0x0a),  # Linefeed
+    chr(0x000a): (0x000a, 0x0a),  # Linefeed
     u'Ø': (0x00d8, 0x0b),
     u'ø': (0x00f8, 0x0c),
-    unichr(0x000d): (0x000d, 0x0d),  # Carriage return
+    chr(0x000d): (0x000d, 0x0d),  # Carriage return
     u'Å': (0x00c5, 0x0e),
     u'å': (0x00e5, 0x0f),
     u'Δ': (0x0394, 0x10),
@@ -50,7 +50,7 @@ MAP = {
     u'Σ': (0x03a3, 0x18),
     u'Θ': (0x0398, 0x19),
     u'Ξ': (0x039e, 0x1a),
-    unichr(0x00a0): (0x00a0, 0x1b),  #  Escape to extension table (displayed
+    chr(0x00a0): (0x00a0, 0x1b),  #  Escape to extension table (displayed
                                      #  as NBSP, on decode of invalid escape
                                      #  sequence)
     u'Æ': (0x00c6, 0x1c),
@@ -86,7 +86,7 @@ MAP = {
     u':': (0x003a, 0x3a),
     u';': (0x003b, 0x3b),
     u'[': (0x005b, 0x1b3c),
-    unichr(0x000c): (0x000c, 0x1b0a),  # Formfeed
+    chr(0x000c): (0x000c, 0x1b0a),  # Formfeed
     u']': (0x005d, 0x1b3e),
     u'?': (0x003f, 0x3f),
     u'|': (0x007c, 0x1b40),
@@ -189,7 +189,7 @@ QUIRK_MAP = {
 BAD = -1
 
 
-class TestEncodingFunctions(unittest.TestCase):
+class TestEncodingFunctions(TestCase):
 
     def test_encoding_supported_unicode_gsm(self):
 
@@ -205,7 +205,7 @@ class TestEncodingFunctions(unittest.TestCase):
                 i_gsm = BAD  # so we see the comparison, not an exception
 
             # We shouldn't generate an invalid escape sequence
-            if key == unichr(0x00a0):
+            if key == chr(0x00a0):
                 self.assertEqual(BAD, i_gsm)
             else:
                 self.assertEqual(MAP[key][1], i_gsm)
@@ -252,16 +252,16 @@ class TestEncodingFunctions(unittest.TestCase):
 
     def test_is_gsm_text_true(self):
         for key in MAP.keys():
-            if key == unichr(0x00a0):
+            if key == chr(0x00a0):
                 continue
             self.assertEqual(messaging.sms.gsm0338.is_gsm_text(key), True)
 
     def test_is_gsm_text_false(self):
         self.assertEqual(
-            messaging.sms.gsm0338.is_gsm_text(unichr(0x00a0)), False)
+            messaging.sms.gsm0338.is_gsm_text(chr(0x00a0)), False)
 
-        for i in xrange(1, 0xffff + 1):
-            if unichr(i) not in MAP:
+        for i in range(1, 0xffff + 1):
+            if chr(i) not in MAP:
                 # Note: it's a little odd, but on error we want to see values
-                if messaging.sms.gsm0338.is_gsm_text(unichr(i)) is not False:
+                if messaging.sms.gsm0338.is_gsm_text(chr(i)) is not False:
                     self.assertEqual(BAD, i)

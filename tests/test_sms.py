@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
 
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+from unittest import TestCase
 
 from messaging.sms import SmsSubmit, SmsDeliver
 from messaging.utils import (timedelta_to_relative_validity as to_relative,
@@ -12,7 +9,7 @@ from messaging.utils import (timedelta_to_relative_validity as to_relative,
                              FixedOffset)
 
 
-class TestEncodingFunctions(unittest.TestCase):
+class TestEncodingFunctions(TestCase):
 
     def test_converting_timedelta_to_validity(self):
         self.assertRaises(ValueError, to_relative, timedelta(minutes=4))
@@ -52,7 +49,7 @@ class TestEncodingFunctions(unittest.TestCase):
         self.assertEqual(to_absolute(when, "GMT-3"), expected)
 
 
-class TestSmsSubmit(unittest.TestCase):
+class TestSmsSubmit(TestCase):
 
     def test_encoding_validity(self):
         # no validity
@@ -241,7 +238,7 @@ class TestSmsSubmit(unittest.TestCase):
         self.assertRaises(ValueError, setattr, sms, 'csca', "1badcsca")
 
 
-class TestSubmitPduCounts(unittest.TestCase):
+class TestSubmitPduCounts(TestCase):
 
     DEST = "+3530000000"
     GSM_CHAR = "x"
@@ -317,7 +314,7 @@ class TestSubmitPduCounts(unittest.TestCase):
         self.assertEqual(len(sms.to_pdu()), 4)
 
 
-class TestSmsDeliver(unittest.TestCase):
+class TestSmsDeliver(TestCase):
 
     def test_decoding_7bit_pdu(self):
         pdu = "07911326040000F0040B911346610089F60000208062917314080CC8F71D14969741F977FD07"

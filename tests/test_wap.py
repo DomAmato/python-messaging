@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from array import array
-import unittest
+from unittest import TestCase
 
 from messaging.sms import SmsDeliver
 from messaging.sms.wap import (is_a_wap_push_notification as is_push,
@@ -13,7 +13,7 @@ def list_to_str(l):
     return a.tostring()
 
 
-class TestSmsWapPush(unittest.TestCase):
+class TestSmsWapPush(TestCase):
 
     data = [1, 6, 34, 97, 112, 112, 108, 105, 99, 97, 116, 105, 111,
         110, 47, 118, 110, 100, 46, 119, 97, 112, 46, 109, 109, 115, 45,

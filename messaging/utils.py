@@ -59,13 +59,13 @@ def to_bytes(s):
     if sys.version_info >= (3,):
         return bytes(s)
 
-    return ''.join(map(unichr, s))
+    return ''.join(map(chr, s))
 
 
 def debug(s):
     # set this to True if you want to poke at PDU encoding/decoding
     if False:
-        print s
+        print(s)
 
 
 def swap(s):

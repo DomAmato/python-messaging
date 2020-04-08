@@ -314,9 +314,9 @@ class SmsSubmit(SmsBase):
                        chr(sms_ref) + chr(total_parts) + chr(i))
                 padding = " "
             else:
-                udh = (unichr(int("%04x" % ((udh_len << 8) | mid), 16)) +
-                       unichr(int("%04x" % ((data_len << 8) | sms_ref), 16)) +
-                       unichr(int("%04x" % ((total_parts << 8) | i), 16)))
+                udh = (chr(int("%04x" % ((udh_len << 8) | mid), 16)) +
+                       chr(int("%04x" % ((data_len << 8) | sms_ref), 16)) +
+                       chr(int("%04x" % ((total_parts << 8) | i), 16)))
                 padding = ""
 
             pdu_msgs.append(packing_func(padding + msg, udh))
@@ -325,6 +325,6 @@ class SmsSubmit(SmsBase):
 
     def _get_rand_id(self):
         if not self.id_list:
-            self.id_list = range(0, 255)
+            self.id_list = list(range(0, 255))
 
         return self.id_list.pop(0)

@@ -25,7 +25,7 @@ def flatten_list(x):
     """Flattens ``x`` into a single list"""
     result = []
     for el in x:
-        if hasattr(el, "__iter__") and not isinstance(el, basestring):
+        if hasattr(el, "__iter__") and not isinstance(el, str):
             result.extend(flatten_list(el))
         else:
             result.append(el)
@@ -175,14 +175,14 @@ class MMSDecoder(wsp_pdu.Decoder):
         # <length of data>,
         # <content-type + other possible headers>,
         # <data>
-        for part_num in xrange(num_entries):
+        for part_num in range(num_entries):
             #print '\nPart %d:\n------' % part_num
             headers_len = self.decode_uint_var(data_iter)
             data_len = self.decode_uint_var(data_iter)
 
             # Prepare to read content-type + other possible headers
             ct_field_bytes = []
-            for i in xrange(headers_len):
+            for i in range(headers_len):
                 ct_field_bytes.append(data_iter.next())
 
             ct_iter = PreviewIterator(ct_field_bytes)
@@ -201,7 +201,7 @@ class MMSDecoder(wsp_pdu.Decoder):
 
             # Data (note: this is not null-terminated)
             data = array.array('B')
-            for i in xrange(data_len):
+            for i in range(data_len):
                 data.append(data_iter.next())
 
             part = message.DataPart()
@@ -281,9 +281,9 @@ class MMSDecoder(wsp_pdu.Decoder):
         try:
             name = mms_field_names[byte][1]
             mms_value = getattr(MMSDecoder, 'decode_%s' % name)(byte_iter)
-        except wsp_pdu.DecodeError, msg:
+        except wsp_pdu.DecodeError as e:
             raise wsp_pdu.DecodeError('Invalid MMS Header: Could '
-                                      'not decode MMS-value: %s' % msg)
+                                      'not decode MMS-value: %s' % e)
         except:
             raise RuntimeError('A fatal error occurred, probably due to an '
                                'unimplemented decoding operation. Tried to '
@@ -316,9 +316,9 @@ class MMSDecoder(wsp_pdu.Decoder):
             # TODO: add proper support for charsets...
             try:
                 charset = wsp_pdu.Decoder.decode_well_known_charset(byte_iter)
-            except wsp_pdu.DecodeError, msg:
+            except wsp_pdu.DecodeError as e:
                 raise Exception('encoded_string_value decoding error - '
-                                'Could not decode Charset value: %s' % msg)
+                                'Could not decode Charset value: %s' % e)
 
             return wsp_pdu.Decoder.decode_text_string(byte_iter)
         except wsp_pdu.DecodeError:
@@ -844,9 +844,9 @@ class MMSEncoder(wsp_pdu.Encoder):
                     ret = getattr(MMSEncoder,
                                   'encode_%s' % expected_type)(header_value)
                     encoded_header.extend(ret)
-                except wsp_pdu.EncodeError, msg:
+                except wsp_pdu.EncodeError as e:
                     raise wsp_pdu.EncodeError('Error encoding parameter '
-                                              'value: %s' % msg)
+                                              'value: %s' % e)
                 except:
                     debug('A fatal error occurred, probably due to an '
                           'unimplemented encoding operation')

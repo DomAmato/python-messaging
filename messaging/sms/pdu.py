@@ -1,7 +1,7 @@
 # see LICENSE
 
 
-class Pdu(object):
+class Pdu:
 
     def __init__(self, pdu, len_smsc, cnt=1, seq=1):
         self.pdu = pdu.upper()

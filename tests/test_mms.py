@@ -2,7 +2,7 @@
 from array import array
 import datetime
 import os
-import unittest
+from unittest import TestCase
 
 from messaging.mms.message import MMSMessage
 
@@ -11,7 +11,7 @@ from messaging.mms.message import MMSMessage
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'mms-data')
 
 
-class TestMmsDecoding(unittest.TestCase):
+class TestMmsDecoding(TestCase):
 
     def test_decoding_from_data(self):
         path = os.path.join(DATA_DIR, 'iPhone.mms')

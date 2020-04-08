@@ -184,7 +184,7 @@ class SmsDeliver(SmsBase):
             data = data[ud_len:].tolist()
             _bytes = [int("%02X%02X" % (data[i], data[i + 1]), 16)
                             for i in range(0, len(data), 2)]
-            self.text = u''.join(list(map(unichr, _bytes)))
+            self.text = u''.join(list(map(chr, _bytes)))
 
     pdu = property(lambda self: self._pdu, _set_pdu)
 

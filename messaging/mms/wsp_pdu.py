@@ -447,7 +447,7 @@ class Decoder:
 
         longInt = 0
         # Decode the Multi-octect-integer
-        for i in xrange(shortLength):
+        for i in range(shortLength):
             longInt = longInt << 8
             longInt |= byte_iter.next()
 
@@ -804,8 +804,8 @@ class Decoder:
         """
         try:
             media_value = Decoder.decode_constrained_encoding(byte_iter)
-        except DecodeError, msg:
-            raise DecodeError('Invalid Constrained-media: %s' % msg)
+        except DecodeError as e:
+            raise DecodeError('Invalid Constrained-media: %s' % e)
 
         if isinstance(media_value, int):
             try:
@@ -843,7 +843,7 @@ class Decoder:
 
         # Read parameters, etc, until <value_length> is reached
         ct_field_bytes = array.array('B')
-        for i in xrange(value_length):
+        for i in range(value_length):
             ct_field_bytes.append(byte_iter.next())
 
         ct_iter = PreviewIterator(ct_field_bytes)
@@ -898,8 +898,8 @@ class Decoder:
         typed_value = ''
         try:
             typed_value = getattr(Decoder, 'decode_%s' % value_type)(byte_iter)
-        except DecodeError, msg:
-            raise DecodeError('Could not decode Typed-parameter: %s' % msg)
+        except DecodeError as e:
+            raise DecodeError('Could not decode Typed-parameter: %s' % e)
         except:
             debug('A fatal error occurred, probably due to an '
                   'unimplemented decoding operation')
@@ -1319,7 +1319,7 @@ class Decoder:
         hdr_fields = get_header_field_names()
         # TODO: *technically* this can fail, but then we have already
         # read a byte... should fix?
-        if field_value not in xrange(len(hdr_fields)):
+        if field_value not in list(range(len(hdr_fields))):
             raise DecodeError('Invalid Header Field value: %d' % field_value)
 
         field_name = hdr_fields[field_value]
@@ -1333,8 +1333,8 @@ class Decoder:
             try:
                 decoded_value = getattr(Decoder,
                                        'decode_%s' % wap_value_type)(byte_iter)
-            except DecodeError, msg:
-                raise DecodeError('Could not decode Wap-value: %s' % msg)
+            except DecodeError as e:
+                raise DecodeError('Could not decode Wap-value: %s' % e)
             except:
                 debug('An error occurred, probably due to an '
                       'unimplemented decoding operation. Tried to '
@@ -1664,8 +1664,8 @@ class Encoder:
                     ret = getattr(Encoder,
                                   'encode_%s' % expected_type)(parameter_value)
                     encoded_parameter.extend(ret)
-                except EncodeError, msg:
-                    raise EncodeError('Error encoding param value: %s' % msg)
+                except EncodeError as e:
+                    raise EncodeError('Error encoding param value: %s' % e)
                 except:
                     debug('A fatal error occurred, probably due to an '
                           'unimplemented encoding operation')
@@ -1799,8 +1799,8 @@ class Encoder:
             try:
                 ret = getattr(Encoder, 'encode_%s' % wap_value_type)(value)
                 encoded_header.extend(ret)
-            except EncodeError, msg:
-                raise EncodeError('Error encoding Wap-value: %s' % msg)
+            except EncodeError as e:
+                raise EncodeError('Error encoding Wap-value: %s' % e)
             except:
                 debug('A fatal error occurred, probably due to an '
                       'unimplemented encoding operation')
@@ -1920,7 +1920,7 @@ class Encoder:
         :return: The encoded media type value, as a sequence of bytes
         :rtype: str
         """
-        if not isinstance(media_value, basestring):
+        if not isinstance(media_value, str):
             try:
                 media_value = str(media_value)
             except:
@@ -2045,8 +2045,8 @@ class Encoder:
             # ...now try Accept-general-form
             try:
                 encoded_media_range = Encoder.encode_media_type(accept_value)
-            except EncodeError, msg:
-                raise EncodeError('Cannot encode Accept-value: %s' % msg)
+            except EncodeError as e:
+                raise EncodeError('Cannot encode Accept-value: %s' % e)
 
             value_length = Encoder.encode_value_length(len(encoded_media_range))
             encoded_accept_value = value_length

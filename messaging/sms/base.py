@@ -1,7 +1,7 @@
 # see LICENSE
 
 
-class SmsBase(object):
+class SmsBase:
 
     def __init__(self):
         self.udh = None
