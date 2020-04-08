@@ -36,7 +36,7 @@ class PreviewIterator:
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         self.reset_preview()
         if len(self._cached_values) > 0:
             return self._cached_values.pop(0)

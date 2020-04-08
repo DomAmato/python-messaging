@@ -461,7 +461,7 @@ class TestSmsDeliver(TestCase):
         }
 
         sms = SmsDeliver(pdu)
-        self.assertEqual(sms.csca, None)
+        self.assertIsNone(sms.csca)
         data = sms.data
         self.assertEqual(data['ref'], 5)
         self.assertEqual(sms.sr, sr)
