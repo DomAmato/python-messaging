@@ -331,7 +331,7 @@ class Decoder:
         :rtype: int
         """
         # Make the byte unsigned
-        return byte_iter.next() & 0xf
+        return next(byte_iter) & 0xf
 
     @staticmethod
     def decode_uint_var(byte_iter):
@@ -353,11 +353,11 @@ class Decoder:
         :rtype: int
         """
         uint = 0
-        byte = byte_iter.next()
+        byte = next(byte_iter)
         while (byte >> 7) == 0x01:
             uint = uint << 7
             uint |= byte & 0x7f
-            byte = byte_iter.next()
+            byte = next(byte_iter)
 
         uint = uint << 7
         uint |= byte & 0x7f
@@ -388,7 +388,7 @@ class Decoder:
             byte_iter.reset_preview()
             raise DecodeError('Not a valid short-integer: MSB not set')
 
-        byte = byte_iter.next()
+        byte = next(byte_iter)
         return byte & 0x7f
 
     @staticmethod
@@ -449,7 +449,7 @@ class Decoder:
         # Decode the Multi-octect-integer
         for i in range(shortLength):
             longInt = longInt << 8
-            longInt |= byte_iter.next()
+            longInt |= next(byte_iter)
 
         return longInt
 
@@ -474,14 +474,14 @@ class Decoder:
         :rtype: str
         """
         decoded_string = ''
-        byte = byte_iter.next()
+        byte = next(byte_iter)
         # Remove Quote character (octet 127), if present
         if byte == 127:
-            byte = byte_iter.next()
+            byte = next(byte_iter)
 
         while byte != 0x00:
             decoded_string += chr(byte)
-            byte = byte_iter.next()
+            byte = next(byte_iter)
 
         return decoded_string
 
@@ -505,7 +505,7 @@ class Decoder:
             raise DecodeError('Invalid quoted string: must '
                               'start with <octect 34>')
 
-        byte_iter.next()
+        next(byte_iter)
         # CHECK: should the quotation chars be pre- and appended before
         # returning *technically* we should not check for quote characters.
         return Decoder.decode_text_string(byte_iter)
@@ -528,10 +528,10 @@ class Decoder:
             byte_iter.reset_preview()
             raise DecodeError('Invalid token')
 
-        byte = byte_iter.next()
+        byte = next(byte_iter)
         while byte > 31 and byte not in separators:
             token += chr(byte)
-            byte = byte_iter.next()
+            byte = next(byte_iter)
 
         return token
 
@@ -561,10 +561,10 @@ class Decoder:
             raise DecodeError('Invalid Extension-media: TEXT '
                               'starts with invalid character: %d' % byte)
 
-        byte = byte_iter.next()
+        byte = next(byte_iter)
         while byte != 0x00:
             media_value += chr(byte)
-            byte = byte_iter.next()
+            byte = next(byte_iter)
 
         return media_value
 
@@ -614,7 +614,7 @@ class Decoder:
             raise DecodeError('Not a valid short-length: '
                               'should be in octet range 0-30')
 
-        return byte_iter.next()
+        return next(byte_iter)
 
     @staticmethod
     def decode_value_length(byte_iter):
@@ -646,7 +646,7 @@ class Decoder:
             byte = byte_iter.preview()
             # CHECK: this strictness MAY cause issues, but it is correct
             if byte == 31:
-                byte_iter.next()  # skip past the length-quote
+                next(byte_iter)  # skip past the length-quote
                 length_value = Decoder.decode_uint_var(byte_iter)
             else:
                 byte_iter.reset_preview()
@@ -844,7 +844,7 @@ class Decoder:
         # Read parameters, etc, until <value_length> is reached
         ct_field_bytes = array.array('B')
         for i in range(value_length):
-            ct_field_bytes.append(byte_iter.next())
+            ct_field_bytes.append(next(byte_iter))
 
         ct_iter = PreviewIterator(ct_field_bytes)
         # Now, decode all the bytes read
@@ -1186,11 +1186,11 @@ class Decoder:
         :return: No-value, which is 0x00
         :rtype: int
         """
-        byte_iter, local_iter = byte_iter.next()
-        if local_iter.next() != 0x00:
+        byte_iter, local_iter = next(byte_iter)
+        if next(local_iter) != 0x00:
             raise DecodeError('Expected No-value')
 
-        byte_iter.next()
+        next(byte_iter)
         return 0x00
 
     @staticmethod
@@ -1226,7 +1226,7 @@ class Decoder:
 
             # Check for the Q-Token (to see if there are Accept-parameters)
             if byte_iter.preview() == 128:
-                byte_iter.next()
+                next(byte_iter)
                 q_value = Decoder.decode_q_value(byte_iter)
                 try:
                     accept_extension = Decoder.decode_parameter(byte_iter)
@@ -1260,7 +1260,7 @@ class Decoder:
         """
         byte = byte_iter.preview()
         if byte == 0x80:  # No-cache
-            byte_iter.next()
+            next(byte_iter)
             # TODO: Not sure if this parameter name (or even usage) is correct
             name, value = 'Cache-control', 'No-cache'
         else:
@@ -1286,7 +1286,7 @@ class Decoder:
         byte = byte_iter.preview()
         byte_iter.reset_preview()
         if byte == 127:
-            byte_iter.next()
+            next(byte_iter)
             decoded_charset = '*'
         else:
             charset_value = Decoder.decode_integer_value(byte_iter)

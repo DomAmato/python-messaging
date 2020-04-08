@@ -193,7 +193,7 @@ class TestEncodingFunctions(TestCase):
 
     def test_encoding_supported_unicode_gsm(self):
 
-        for key in MAP.keys():
+        for key in list(MAP.keys()):
             # Use 'ignore' so that we see the code tested, not an exception
             s_gsm = key.encode('gsm0338', 'ignore')
 
@@ -213,7 +213,7 @@ class TestEncodingFunctions(TestCase):
     def test_encoding_supported_greek_unicode_gsm(self):
         # Note: Conversion is one way, hence no corresponding decode test
 
-        for key in GREEK_MAP.keys():
+        for key in list(GREEK_MAP.keys()):
             # Use 'replace' so that we trigger the mapping
             s_gsm = key.encode('gsm0338', 'replace')
 
@@ -227,7 +227,7 @@ class TestEncodingFunctions(TestCase):
     def test_encoding_supported_quirk_unicode_gsm(self):
         # Note: Conversion is one way, hence no corresponding decode test
 
-        for key in QUIRK_MAP.keys():
+        for key in list(QUIRK_MAP.keys()):
             # Use 'replace' so that we trigger the mapping
             s_gsm = key.encode('gsm0338', 'replace')
 
@@ -239,7 +239,7 @@ class TestEncodingFunctions(TestCase):
             self.assertEqual(QUIRK_MAP[key][1], i_gsm)
 
     def test_decoding_supported_unicode_gsm(self):
-        for key in MAP.keys():
+        for key in list(MAP.keys()):
             i_gsm = MAP[key][1]
             if i_gsm <= 0xff:
                 s_gsm = chr(i_gsm)
@@ -251,7 +251,7 @@ class TestEncodingFunctions(TestCase):
             self.assertEqual(MAP[key][0], ord(s_unicode))
 
     def test_is_gsm_text_true(self):
-        for key in MAP.keys():
+        for key in list(MAP.keys()):
             if key == chr(0x00a0):
                 continue
             self.assertEqual(messaging.sms.gsm0338.is_gsm_text(key), True)

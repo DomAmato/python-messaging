@@ -183,7 +183,7 @@ class MMSDecoder(wsp_pdu.Decoder):
             # Prepare to read content-type + other possible headers
             ct_field_bytes = []
             for i in range(headers_len):
-                ct_field_bytes.append(data_iter.next())
+                ct_field_bytes.append(next(data_iter))
 
             ct_iter = PreviewIterator(ct_field_bytes)
             # Get content type
@@ -202,7 +202,7 @@ class MMSDecoder(wsp_pdu.Decoder):
             # Data (note: this is not null-terminated)
             data = array.array('B')
             for i in range(data_len):
-                data.append(data_iter.next())
+                data.append(next(data_iter))
 
             part = message.DataPart()
             part.set_data(data, ctype)
@@ -269,7 +269,7 @@ class MMSDecoder(wsp_pdu.Decoder):
         byte = wsp_pdu.Decoder.decode_short_integer_from_byte(preview)
 
         if byte in mms_field_names:
-            byte_iter.next()
+            next(byte_iter)
             mms_field_name = mms_field_names[byte][0]
         else:
             byte_iter.reset_preview()
@@ -350,13 +350,13 @@ class MMSDecoder(wsp_pdu.Decoder):
             byte_iter.reset_preview()
             raise wsp_pdu.DecodeError('Error parsing boolean value '
                                       'for byte: %s' % hex(byte))
-        byte = byte_iter.next()
+        byte = next(byte_iter)
         return byte == 128
 
     @staticmethod
     def decode_delivery_time_value(byte_iter):
         value_length = wsp_pdu.Decoder.decode_value_length(byte_iter)
-        token = byte_iter.next()
+        token = next(byte_iter)
         value = wsp_pdu.Decoder.decode_long_integer(byte_iter)
         if token == 128:
             token_type = 'absolute'
@@ -383,7 +383,7 @@ class MMSDecoder(wsp_pdu.Decoder):
         """
         value_length = wsp_pdu.Decoder.decode_value_length(byte_iter)
         # See what token we have
-        byte = byte_iter.next()
+        byte = next(byte_iter)
         if byte == 129:  # Insert-address-token
             return '<not inserted>'
 
@@ -416,7 +416,7 @@ class MMSDecoder(wsp_pdu.Decoder):
         }
         byte = byte_iter.preview()
         if byte in class_identifiers:
-            byte_iter.next()
+            next(byte_iter)
             return class_identifiers[byte]
 
         byte_iter.reset_preview()
@@ -444,7 +444,7 @@ class MMSDecoder(wsp_pdu.Decoder):
 
         byte = byte_iter.preview()
         if byte in message_types:
-            byte_iter.next()
+            next(byte_iter)
             return message_types[byte]
 
         byte_iter.reset_preview()
@@ -467,7 +467,7 @@ class MMSDecoder(wsp_pdu.Decoder):
 
         byte = byte_iter.preview()
         if byte in priorities:
-            byte = byte_iter.next()
+            byte = next(byte_iter)
             return priorities[byte]
 
         byte_iter.reset_preview()
@@ -498,7 +498,7 @@ class MMSDecoder(wsp_pdu.Decoder):
             raise wsp_pdu.DecodeError('Error parsing sender visibility '
                                       'value for byte: %s' % hex(byte))
 
-        byte = byte_iter.next()
+        byte = next(byte_iter)
         value = 'Hide' if byte == 128 else 'Show'
         return value
 
@@ -529,7 +529,7 @@ class MMSDecoder(wsp_pdu.Decoder):
             0x88: 'Error-unsupported-message',
         }
         byte = byte_iter.preview()
-        byte_iter.next()
+        next(byte_iter)
         # Return error unspecified if it couldn't be decoded
         return response_status_values.get(byte, 0x81)
 
@@ -555,7 +555,7 @@ class MMSDecoder(wsp_pdu.Decoder):
             0x84: 'Unrecognised',
         }
 
-        byte = byte_iter.next()
+        byte = next(byte_iter)
         # Return an unrecognised state if it couldn't be decoded
         return status_values.get(byte, 0x84)
 
@@ -576,7 +576,7 @@ class MMSDecoder(wsp_pdu.Decoder):
         :rtype: str or int
         """
         value_length = MMSDecoder.decode_value_length(byte_iter)
-        token = byte_iter.next()
+        token = next(byte_iter)
 
         if token == 0x80:    # Absolute-token
             return MMSDecoder.decode_date_value(byte_iter)
