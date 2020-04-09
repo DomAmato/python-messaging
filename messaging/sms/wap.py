@@ -6,7 +6,7 @@ from messaging.mms.mms_pdu import MMSDecoder
 
 
 def is_a_wap_push_notification(s):
-    if not isinstance(s, str):
+    if not isinstance(s, bytes):
         raise TypeError("data must be an array.array serialised to string")
 
     data = array("B", s)

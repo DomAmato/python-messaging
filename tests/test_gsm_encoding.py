@@ -18,6 +18,7 @@
 """Unittests for the gsm encoding/decoding module"""
 
 from unittest import TestCase
+import codecs
 import messaging.sms.gsm0338  # imports GSM7 codec
 
 # Reversed from: ftp://ftp.unicode.org/Public/MAPPINGS/ETSI/GSM0338.TXT
@@ -195,7 +196,7 @@ class TestEncodingFunctions(TestCase):
 
         for key in list(MAP.keys()):
             # Use 'ignore' so that we see the code tested, not an exception
-            s_gsm = key.encode('gsm0338', 'ignore')
+            s_gsm = codecs.encode(key, 'gsm0338', 'ignore')
 
             if len(s_gsm) == 1:
                 i_gsm = ord(s_gsm)
@@ -215,7 +216,7 @@ class TestEncodingFunctions(TestCase):
 
         for key in list(GREEK_MAP.keys()):
             # Use 'replace' so that we trigger the mapping
-            s_gsm = key.encode('gsm0338', 'replace')
+            s_gsm = codecs.encode(key, 'gsm0338', 'replace')
 
             if len(s_gsm) == 1:
                 i_gsm = ord(s_gsm)
@@ -229,7 +230,7 @@ class TestEncodingFunctions(TestCase):
 
         for key in list(QUIRK_MAP.keys()):
             # Use 'replace' so that we trigger the mapping
-            s_gsm = key.encode('gsm0338', 'replace')
+            s_gsm = codecs.encode(key, 'gsm0338', 'replace')
 
             if len(s_gsm) == 1:
                 i_gsm = ord(s_gsm)
@@ -247,18 +248,17 @@ class TestEncodingFunctions(TestCase):
                 s_gsm = chr((i_gsm & 0xff00) >> 8)
                 s_gsm += chr(i_gsm & 0x00ff)
 
-            s_unicode = s_gsm.decode('gsm0338', 'strict')
+            s_unicode = codecs.encode(s_gsm, 'gsm0338', 'strict')
             self.assertEqual(MAP[key][0], ord(s_unicode))
 
     def test_is_gsm_text_true(self):
         for key in list(MAP.keys()):
             if key == chr(0x00a0):
                 continue
-            self.assertEqual(messaging.sms.gsm0338.is_gsm_text(key), True)
+            self.assertTrue(messaging.sms.gsm0338.is_gsm_text(key))
 
     def test_is_gsm_text_false(self):
-        self.assertEqual(
-            messaging.sms.gsm0338.is_gsm_text(chr(0x00a0)), False)
+        self.assertFalse(messaging.sms.gsm0338.is_gsm_text(chr(0x00a0)))
 
         for i in range(1, 0xffff + 1):
             if chr(i) not in MAP:

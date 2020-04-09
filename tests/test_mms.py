@@ -95,7 +95,7 @@ class TestMmsDecoding(TestCase):
         mms = MMSMessage.from_file(path)
         self.assertTrue(isinstance(mms, MMSMessage))
         headers = {
-            'From': binascii.unhexlify(b'616c6c616e40746f6d736c6f742e636f6d'),
+            'From': binascii.unhexlify(b'616c6c616e40746f6d736c6f742e636f6d').decode(),
             'Transaction-Id': '1234',
             'MMS-Version': '1.0', 'Message-Type': 'm-retrieve-conf',
             'Date': datetime.datetime(2003, 2, 16, 3, 48, 33),
@@ -126,7 +126,7 @@ class TestMmsDecoding(TestCase):
         headers = {
             'From': '<not inserted>', 'Read-Reply': False,
             'Transaction-Id': '2112410527', 'MMS-Version': '1.0',
-            'To': binascii.unhexlify(b'7464707440616a616a672e63646d'),
+            'To': binascii.unhexlify(b'7464707440616a616a672e63646d').decode(),
             'Delivery-Report': False,
             'Message-Type': 'm-send-req',
             'Content-Type': ('application/vnd.wap.multipart.related', {'Start': '<SMIL.TXT>', 'Type': 'application/smil'}),
@@ -148,7 +148,7 @@ class TestMmsDecoding(TestCase):
         mms = MMSMessage.from_file(path)
         self.assertTrue(isinstance(mms, MMSMessage))
         headers = {
-            'From': binascii.unhexlify(b'2b31363530353535303030302f545950453d504c4d4e'),
+            'From': binascii.unhexlify(b'2b31363530353535303030302f545950453d504c4d4e').decode(),
             'Message-Class': 'Personal',
             'Transaction-Id': '1067263672', 'MMS-Version': '1.0',
             'Priority': 'Normal', 'To': '112/TYPE=PLMN',
@@ -201,7 +201,7 @@ class TestMmsDecoding(TestCase):
         mms = MMSMessage.from_file(path)
         self.assertTrue(isinstance(mms, MMSMessage))
         headers = {
-            'From': binascii.unhexlify(b'2b31363530353535303030302f545950453d504c4d4e'),
+            'From': binascii.unhexlify(b'2b31363530353535303030302f545950453d504c4d4e').decode(),
             'Message-Class': 'Personal',
             'Transaction-Id': '1118775337', 'MMS-Version': '1.0',
             'Priority': 'Normal', 'To': 'Jg', 'Delivery-Report': False,
@@ -257,7 +257,7 @@ class TestMmsDecoding(TestCase):
         mms = MMSMessage.from_file(path)
         self.assertTrue(isinstance(mms, MMSMessage))
         headers = {
-            'From': binascii.unhexlify(b'676f6c64706f737440686f746d61696c2e636f6d'),
+            'From': binascii.unhexlify(b'676f6c64706f737440686f746d61696c2e636f6d').decode(),
             'Transaction-Id': '0000000001',
             'MMS-Version': '1.0', 'Message-Type': 'm-retrieve-conf',
             'Date': datetime.datetime(2002, 8, 9, 13, 8, 2),
@@ -350,7 +350,7 @@ class TestMmsDecoding(TestCase):
             'Sender-Visibility': 'Show', 'From': '<not inserted>',
             'Read-Reply': False, 'Message-Class': 'Personal',
             'Transaction-Id': '31887', 'MMS-Version': '1.0',
-            'To': binascii.unhexlify(b'303733383334353636342f545950453d504c4d4e'),
+            'To': binascii.unhexlify(b'303733383334353636342f545950453d504c4d4e').decode(),
             'Delivery-Report': False,
             'Message-Type': 'm-send-req', 'Subject': 'IL',
             'Content-Type': ('application/vnd.wap.multipart.mixed', {}),
