@@ -326,6 +326,6 @@ class SmsSubmit(SmsBase):
 
     def _get_rand_id(self):
         if not self.id_list:
-            self.id_list = list(range(0, 255))
+            self.id_list = range(0, 255)
 
-        return self.id_list.pop(0)
+        return list(self.id_list).pop(0)
