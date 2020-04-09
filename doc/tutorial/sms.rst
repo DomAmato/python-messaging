@@ -106,7 +106,7 @@ term:`PDU` decoding is really simple with :class:`~messaging.sms.SmsDeliver`::
     print sms.data
     # {'csca': '+447785016005', 'type': None,
     #  'date': datetime.datetime(2009, 9, 1, 16, 41, 32),
-    #  'text': u'  1741 bst', 'fmt': 0, 'pid': 0,
+    #  'text': '  1741 bst', 'fmt': 0, 'pid': 0,
     #  'dcs': 0, 'number': '+447927267410'}
 
 Apart from the pdu, the :py:meth:`messaging.sms.SmsDeliver.__init__` accepts a

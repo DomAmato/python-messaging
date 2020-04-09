@@ -20,8 +20,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'python-messaging'
-copyright = u'2010, Pablo Martí'
+project = 'python-messaging'
+copyright = '2010, Pablo Martí'
 
 # The short X.Y version.
 version = '0.5.9'
@@ -150,8 +150,8 @@ htmlhelp_basename = 'python-messagingdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'python-messaging.tex', u'python-messaging Documentation',
-   u'Pablo Martí', 'manual'),
+  ('index', 'python-messaging.tex', 'python-messaging Documentation',
+   'Pablo Martí', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -183,6 +183,6 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'python-messaging', u'python-messaging Documentation',
-     [u'Pablo Martí'], 1)
+    ('index', 'python-messaging', 'python-messaging Documentation',
+     ['Pablo Martí'], 1)
 ]
