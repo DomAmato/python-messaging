@@ -18,7 +18,6 @@
 """Unittests for the gsm encoding/decoding module"""
 
 from unittest import TestCase
-import codecs
 from messaging.sms.gsm0338 import is_valid_gsm # imports GSM7 codec
 
 # Reversed from: ftp://ftp.unicode.org/Public/MAPPINGS/ETSI/GSM0338.TXT
@@ -196,7 +195,7 @@ class TestEncodingFunctions(TestCase):
 
         for key in list(MAP.keys()):
             # Use 'ignore' so that we see the code tested, not an exception
-            s_gsm = codecs.encode(key, 'gsm0338', 'ignore')
+            s_gsm = key.encode('gsm0338', 'ignore')
 
             if len(s_gsm) == 1:
                 i_gsm = ord(s_gsm)
@@ -216,7 +215,7 @@ class TestEncodingFunctions(TestCase):
 
         for key in list(GREEK_MAP.keys()):
             # Use 'replace' so that we trigger the mapping
-            s_gsm = codecs.encode(key, 'gsm0338', 'replace')
+            s_gsm = key.encode('gsm0338', 'replace')
 
             if len(s_gsm) == 1:
                 i_gsm = ord(s_gsm)
@@ -230,7 +229,7 @@ class TestEncodingFunctions(TestCase):
 
         for key in list(QUIRK_MAP.keys()):
             # Use 'replace' so that we trigger the mapping
-            s_gsm = codecs.encode(key, 'gsm0338', 'replace')
+            s_gsm = key.encode('gsm0338', 'replace')
 
             if len(s_gsm) == 1:
                 i_gsm = ord(s_gsm)
@@ -248,7 +247,7 @@ class TestEncodingFunctions(TestCase):
                 s_gsm = chr((i_gsm & 0xff00) >> 8)
                 s_gsm += chr(i_gsm & 0x00ff)
 
-            s_unicode = codecs.decode(s_gsm, 'gsm0338')
+            s_unicode = s_gsm.decode('gsm0338')
             self.assertEqual(MAP[key][0], ord(s_unicode))
 
     def test_is_valid_gsm_true(self):

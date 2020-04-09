@@ -3,7 +3,6 @@
 
 from datetime import datetime, timedelta
 import re
-import codecs
 
 from messaging.sms import consts
 from messaging.utils import (debug, encode_str, clean_number,
@@ -244,7 +243,7 @@ class SmsSubmit(SmsBase):
         message_pdu = ""
 
         if self.fmt == 0x00:
-            self.text_gsm = codecs.encode(self.text, "gsm0338")
+            self.text_gsm = self.text.encode("gsm0338")
             if len(self.text_gsm) <= consts.SEVENBIT_SIZE:
                 message_pdu = [pack_8bits_to_7bits(self.text_gsm)]
             else:

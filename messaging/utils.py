@@ -2,7 +2,6 @@ from array import array
 from datetime import timedelta, tzinfo
 from math import floor
 import sys
-import codecs
 
 
 class FixedOffset(tzinfo):
@@ -46,7 +45,7 @@ class FixedOffset(tzinfo):
 
 
 def bytes_to_str(b):
-    return codecs.encode(b, 'latin1')
+    return b.encode('latin1')
 
 
 def to_array(pdu):

@@ -271,8 +271,8 @@ def decode(input_, errors='strict'):
 
 # encodings module API
 def getregentry(encoding):
-    if encoding in ('gsm0338', 'gsm7'):
-        return codecs.CodecInfo(name='gsm0338',
+    if encoding in ('gsm0338o'):
+        return codecs.CodecInfo(name='gsm0338o',
                                 encode=encode,
                                 decode=decode)
 
