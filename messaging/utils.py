@@ -2,6 +2,7 @@ from array import array
 from datetime import timedelta, tzinfo
 from math import floor
 import sys
+import codecs
 
 
 class FixedOffset(tzinfo):
@@ -46,7 +47,7 @@ class FixedOffset(tzinfo):
 
 def bytes_to_str(b):
     if sys.version_info >= (3,):
-        return b.decode('latin1')
+        return codecs.decode(b, 'latin1')
 
     return b
 

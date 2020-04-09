@@ -11,7 +11,7 @@ from messaging.sms.wap import (is_a_wap_push_notification as is_push,
 
 def list_to_str(l):
     a = array("B", l)
-    return a.tostring()
+    return a.tobytes()
 
 
 class TestSmsWapPush(TestCase):

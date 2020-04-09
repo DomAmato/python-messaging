@@ -264,13 +264,13 @@ class TestMmsDecoding(TestCase):
             'Content-Type': ('application/vnd.wap.multipart.related', {'Start': '<A0>', 'Type': 'application/smil'}),
             'Subject': 'GOLD',
         }
-        text_data1 = 'Audio'
-        text_data2 = 'Text +'
-        text_data3 = 'tagtag.com/gold\r\n'
-        text_data4 = 'globalisierunglobalisierunglobalisierunglobalisierunglobalisierunglobalisierunglobalisierungnureisilabolg'
-        text_data5 = 'KLONE\r\nKLONE\r\n'
-        text_data6 = 'pr\xe4sentiert..'
-        text_data7 = 'GOLD'
+        text_data1 = b'Audio'
+        text_data2 = b'Text +'
+        text_data3 = b'tagtag.com/gold\r\n'
+        text_data4 = b'globalisierunglobalisierunglobalisierunglobalisierunglobalisierunglobalisierunglobalisierungnureisilabolg'
+        text_data5 = b'KLONE\r\nKLONE\r\n'
+        text_data6 = b'pr\xe4sentiert..'
+        text_data7 = b'GOLD'
         smil_data = b'<smil><head><layout><root-layout background-color="#000000"/>\r\n<region id="text" top="0" left="0" height="100%" width="100%"/>\r\n</layout>\r\n</head>\r\n<body>\r\n<par dur="3000ms">\r\n<text src="Text0000.txt" region="text">\r\n <param name="foreground-color" value="#ffff00"/>\r\n <param name="textsize" value="large"/>\r\n</text>\r\n</par>\r\n<par dur="2000ms">\r\n<text src="Text0001.txt" region="text">\r\n <param name="foreground-color" value="#ffff00"/>\r\n <param name="textsize" value="small"/>\r\n</text>\r\n</par>\r\n<par dur="2000ms">\r\n<text src="Text0007.txt" region="text">\r\n <param name="foreground-color" value="#ffff00"/>\r\n <param name="textsize" value="normal"/>\r\n</text>\r\n</par>\r\n<par dur="6000ms">\r\n<text src="Text0008.txt" region="text">\r\n <param name="foreground-color" value="#ffff00"/>\r\n <param name="textsize" value="normal"/>\r\n</text>\r\n<audio src="gold102.amr" start="1000ms"/>\r\n</par>\r\n<seq repeatcount="4">\r\n<par dur="1500ms">\r\n<text src="Text0002.txt" region="text">\r\n <param name="foreground-color" value="#ff0080"/>\r\n <param name="textsize" value="normal"/>\r\n</text>\r\n</par>\r\n<par dur="1500ms">\r\n<text src="Text0003.txt" region="text">\r\n <param name="foreground-color" value="#00ff00"/>\r\n <param name="textsize" value="normal"/>\r\n</text>\r\n</par>\r\n</seq>\r\n<par dur="10000ms">\r\n<text src="Text0006.txt" region="text">\r\n <param name="foreground-color" value="#ffff00"/>\r\n <param name="textsize" value="normal"/>\r\n</text>\r\n</par>\r\n</body></smil>'
         self.assertEqual(mms.headers, headers)
         self.assertEqual(len(mms.data_parts), 9)
