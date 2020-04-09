@@ -206,6 +206,9 @@ class TestEncodingFunctions(TestCase):
                 i_gsm = BAD  # so we see the comparison, not an exception
 
             # We shouldn't generate an invalid escape sequence
+            print(i_gsm)
+            print(MAP)
+            print(MAP[key])
             if key == chr(0x00a0):
                 self.assertEqual(BAD, i_gsm)
             else:
@@ -248,7 +251,7 @@ class TestEncodingFunctions(TestCase):
                 s_gsm = chr((i_gsm & 0xff00) >> 8)
                 s_gsm += chr(i_gsm & 0x00ff)
 
-            s_unicode = codecs.decode(s_gsm, 'gsm0338', 'strict')
+            s_unicode = codecs.decode(s_gsm, 'gsm0338')
             self.assertEqual(MAP[key][0], ord(s_unicode))
 
     def test_is_gsm_text_true(self):

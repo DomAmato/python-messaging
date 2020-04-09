@@ -283,7 +283,7 @@ codecs.register(getregentry)
 def is_gsm_text(text):
     """Returns True if ``text`` can be encoded as gsm text"""
     try:
-        codec.encode(text, 'gsm0338')
+        codecs.encode(text, 'gsm0338')
     except UnicodeError:
         return False
     except:
