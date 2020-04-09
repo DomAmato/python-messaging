@@ -40,9 +40,9 @@ class TestSmsWapPush(TestCase):
             "0791447758100650400E80885810000000810004016082415464408C0C08049F8E020105040B8423F00106226170706C69636174696F6E2F766E642E7761702E6D6D732D6D65737361676500AF848C82984E4F4B3543694B636F544D595347344D4253774141734B7631344655484141414141414141008D908919802B3434373738353334323734392F545950453D504C4D4E008A808E0274008805810301194083687474703A2F",
             "0791447758100650440E8088581000000081000401608241547440440C08049F8E020205040B8423F02F70726F6D6D732F736572766C6574732F4E4F4B3543694B636F544D595347344D4253774141734B763134465548414141414141414100",
         ]
-        number = binascii.unhexlify(b'3838383530313030303030303138')
+        number = binascii.unhexlify(b'3838383530313030303030303138').decode()
         csca = "+447785016005"
-        data = ""
+        data = b""
 
         sms = SmsDeliver(pdus[0])
         self.assertEqual(sms.udh.concat.ref, 40846)
@@ -67,7 +67,7 @@ class TestSmsWapPush(TestCase):
                 'NOK5CiKcoTMYSG4MBSwAAsKv14FUHAAAAAAAA')
         self.assertEqual(mms.headers['MMS-Version'], '1.0')
         self.assertEqual(mms.headers['From'],
-                binascii.unhexlify(b'2b3434373738353334323734392f545950453d504c4d4e'))
+                binascii.unhexlify(b'2b3434373738353334323734392f545950453d504c4d4e').decode())
         self.assertEqual(mms.headers['Message-Class'], 'Personal')
         self.assertEqual(mms.headers['Message-Size'], 29696)
         self.assertEqual(mms.headers['Expiry'], 72000)
@@ -80,7 +80,7 @@ class TestSmsWapPush(TestCase):
         ]
 
         number = "88850100000008"
-        data = ""
+        data = b""
 
         sms = SmsDeliver(pdus[0])
         self.assertEqual(sms.udh.concat.ref, 57299)
@@ -104,7 +104,7 @@ class TestSmsWapPush(TestCase):
                 'NOK5A1ZdFTMYSG4O3VQAAsJv94GoNAAAAAAAA')
         self.assertEqual(mms.headers['MMS-Version'], '1.0')
         self.assertEqual(mms.headers['From'],
-                binascii.unhexlify(b'2b3434373731373237353034392f545950453d504c4d4e'))
+                binascii.unhexlify(b'2b3434373731373237353034392f545950453d504c4d4e').decode())
         self.assertEqual(mms.headers['Message-Class'], 'Personal')
         self.assertEqual(mms.headers['Message-Size'], 29696)
         self.assertEqual(mms.headers['Expiry'], 259199)
@@ -116,9 +116,9 @@ class TestSmsWapPush(TestCase):
             "0791947122725014440C8500947122921105F5112042519582408C0B05040B8423F0000396020101060B03AE81EAC3958D01A2B48403056A0A20566F6461666F6E650045C60C037761702E6D65696E63616C6C79612E64652F000801035A756D206B6F7374656E6C6F73656E20506F7274616C20224D65696E0083000322202D2065696E66616368206175662064656E20666F6C67656E64656E204C696E6B206B6C69636B656E",
             "0791947122725014440C8500947122921105F5112042519592403C0B05040B8423F00003960202206F6465722064696520536569746520646972656B7420617566727566656E2E2049687200830003205465616D000101",
         ]
-        number = binascii.unhexlify(b'303034393137323232393131')
+        number = binascii.unhexlify(b'303034393137323232393131').decode()
         csca = "+491722270541"
-        data = ""
+        data = b""
 
         sms = SmsDeliver(pdus[0])
         self.assertEqual(sms.udh.concat.ref, 150)
@@ -135,7 +135,7 @@ class TestSmsWapPush(TestCase):
         self.assertEqual(sms.number, number)
         data += sms.text
 
-        self.assertEqual(data, '\x01\x06\x0b\x03\xae\x81\xea\xc3\x95\x8d\x01\xa2\xb4\x84\x03\x05j\n Vodafone\x00E\xc6\x0c\x03wap.meincallya.de/\x00\x08\x01\x03Zum kostenlosen Portal "Mein\x00\x83\x00\x03" - einfach auf den folgenden Link klicken oder die Seite direkt aufrufen. Ihr\x00\x83\x00\x03 Team\x00\x01\x01')
+        self.assertEqual(data, b'\x01\x06\x0b\x03\xae\x81\xea\xc3\x95\x8d\x01\xa2\xb4\x84\x03\x05j\n Vodafone\x00E\xc6\x0c\x03wap.meincallya.de/\x00\x08\x01\x03Zum kostenlosen Portal "Mein\x00\x83\x00\x03" - einfach auf den folgenden Link klicken oder die Seite direkt aufrufen. Ihr\x00\x83\x00\x03 Team\x00\x01\x01')
 
         push = extract_push_notification(data)
         self.assertEqual(is_mms_notification(push), False)

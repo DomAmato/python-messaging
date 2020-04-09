@@ -167,7 +167,7 @@ class MMSDecoder(wsp_pdu.Decoder):
         except StopIteration:
             return
 
-        #print 'Number of data entries (parts) in MMS body:', num_entries
+        #print('Number of data entries (parts) in MMS body:', num_entries)
 
         ########## MMS body: entries ##########
         # For every data "part", we have to read the following sequence:
@@ -176,7 +176,7 @@ class MMSDecoder(wsp_pdu.Decoder):
         # <content-type + other possible headers>,
         # <data>
         for part_num in range(num_entries):
-            #print '\nPart %d:\n------' % part_num
+            #print('\nPart %d:\n------' % part_num)
             headers_len = self.decode_uint_var(data_iter)
             data_len = self.decode_uint_var(data_iter)
 

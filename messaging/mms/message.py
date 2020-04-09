@@ -544,7 +544,7 @@ class DataPart:
         """A buffer containing the binary data of this part"""
         if self._data is not None:
             if type(self._data) == array.array:
-                self._data = self._data.tostring()
+                self._data = self._data.tobytes()
             return self._data
 
         elif self._filename is not None:

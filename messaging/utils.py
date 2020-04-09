@@ -45,7 +45,9 @@ class FixedOffset(tzinfo):
 
 
 def bytes_to_str(b):
-    return b.encode('latin1')
+    if isinstance(b, str):
+        return b.encode('latin1')
+    return b.decode('latin1')
 
 
 def to_array(pdu):
@@ -95,7 +97,7 @@ def pack_8bits_to_7bits(message, udh=None):
 
     if udh is None:
         tl = len(txt)
-        txt += b'\x00'
+        txt += '\x00'
         msgl = int(len(txt) * 7 / 8)
         op = [-1] * msgl
         c = shift = 0
@@ -112,10 +114,10 @@ def pack_8bits_to_7bits(message, udh=None):
 
         pdu = chr(tl) + ''.join(map(chr, op))
     else:
-        txt = b"\x00\x00\x00\x00\x00\x00" + txt
+        txt = "\x00\x00\x00\x00\x00\x00" + txt
         tl = len(txt)
 
-        txt += b'\x00'
+        txt += '\x00'
         msgl = int(len(txt) * 7 / 8)
         op = [-1] * msgl
         c = shift = 0

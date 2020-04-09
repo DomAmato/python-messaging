@@ -105,6 +105,6 @@ while True:
         s += " %02x" % unpack('B', c)
 
     # 000000 00 e0 1e a7 05 6f 00 10
-    print "%06x%s" % (offset, s)
+    print("%06x%s" % (offset, s))
 
     offset += perline

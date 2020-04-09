@@ -75,7 +75,7 @@ for a plain HTTP POST::
     data = buf.getvalue()
     buf.close()
 
-    print "PROXY RESPONSE", data
+    print("PROXY RESPONSE", data)
 
 
 Encoding a m-notifyresp-ind PDU
@@ -110,8 +110,8 @@ MMS, you just need to::
     # data is an array.array("B") instance
     mms = MMSMessage.from_data(data)
 
-    print mms.headers['Message-Type']  # m-send-req
-    print mms.headers['To']            # '+34231342234/TYPE=PLMN'
+    print(mms.headers['Message-Type']  # m-send-req)
+    print(mms.headers['To']            # '+34231342234/TYPE=PLMN')
 
 
 Decoding from a file
@@ -125,8 +125,8 @@ need the path to the file and::
     path = '/tmp/binary-mms.bin'
     mms = MMSMessage.from_file(path)
 
-    print mms.headers['Message-Type']  # m-send-req
-    print mms.headers['To']            # '+34231342234/TYPE=PLMN'
+    print(mms.headers['Message-Type']  # m-send-req)
+    print(mms.headers['To']            # '+34231342234/TYPE=PLMN')
 
 
 Obtaining a MMS from a WAP push notification
@@ -144,7 +144,7 @@ headers::
         "0791447758100650400E80885810000000810004016082415464408C0C08049F8E020105040B8423F00106226170706C69636174696F6E2F766E642E7761702E6D6D732D6D65737361676500AF848C82984E4F4B3543694B636F544D595347344D4253774141734B7631344655484141414141414141008D908919802B3434373738353334323734392F545950453D504C4D4E008A808E0274008805810301194083687474703A2F",
         "0791447758100650440E8088581000000081000401608241547440440C08049F8E020205040B8423F02F70726F6D6D732F736572766C6574732F4E4F4B3543694B636F544D595347344D4253774141734B763134465548414141414141414100",
     ]
-    data = ""
+    data = b""
 
     sms = SmsDeliver(pdus[0])
     data += sms.text
@@ -154,7 +154,7 @@ headers::
 
     mms = extract_push_notification(data)
     url = mms.headers['Content-Location']
-    print url
+    print(url)
 
 
 Once you have the content location, you need to do a HTTP GET to retrieve
@@ -184,4 +184,4 @@ the MMS payload::
     buf.close()
 
     mms = MMSMessage.from_data(data)
-    print mms
+    print(mms)

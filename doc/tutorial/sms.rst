@@ -36,7 +36,7 @@ How to encode a single part SMS ready to be sent::
     sms = SmsSubmit("+44123231231", "hey how's it going?")
     pdu = sms.to_pdu()[0]
 
-    print pdu.length, pdu.pdu
+    print(pdu.length, pdu.pdu)
 
 
 How to encode a concatenated SMS ready to be sent::
@@ -45,7 +45,7 @@ How to encode a concatenated SMS ready to be sent::
 
     sms = SmsSubmit("+44123231231", "hey " * 50)
     for pdu in sms.to_pdu():
-        print pdu.length, pdu.pdu
+        print(pdu.length, pdu.pdu)
 
 
 Setting class
@@ -59,7 +59,7 @@ Setting the SMS class (0-3) is a no brainer::
     sms.class = 0
     pdu = sms.to_pdu()[0]
 
-    print pdu.length, pdu.pdu
+    print(pdu.length, pdu.pdu)
 
 
 Setting validity
@@ -78,7 +78,7 @@ Setting absolute validity::
     sms.validity = datetime(2010, 12, 31, 23, 59, 59)
     pdu = sms.to_pdu()[0]
 
-    print pdu.length, pdu.pdu
+    print(pdu.length, pdu.pdu)
 
 
 Setting relative validity::
@@ -90,7 +90,7 @@ Setting relative validity::
     sms.validity = timedelta(hours=5)
     pdu = sms.to_pdu()[0]
 
-    print pdu.length, pdu.pdu
+    print(pdu.length, pdu.pdu)
 
 
 Decoding
@@ -103,7 +103,7 @@ term:`PDU` decoding is really simple with :class:`~messaging.sms.SmsDeliver`::
     pdu = "0791447758100650040C914497726247010000909010711423400A2050EC468B81C4733A"
     sms = SmsDeliver(pdu)
 
-    print sms.data
+    print(sms.data)
     # {'csca': '+447785016005', 'type': None,
     #  'date': datetime.datetime(2009, 9, 1, 16, 41, 32),
     #  'text': '  1741 bst', 'fmt': 0, 'pid': 0,
@@ -135,7 +135,7 @@ registered::
         # prompt appears (a more robust implementation
         # would wait till the prompt appeared)
         ser.write('AT+CMGS=%d\r' % pdu.length)
-        print ser.readlines()
+        print(ser.readlines())
         # write the PDU and send a Ctrl+z escape
         ser.write('%s\x1a' % pdu.pdu)
         ser.close()

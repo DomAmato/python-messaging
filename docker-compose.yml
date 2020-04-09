@@ -1,0 +1,9 @@
+version: "3"
+services:
+    messaging:
+        build:
+            context: ./
+            dockerfile: ./Dockerfile
+        volumes:
+            - ./messaging:/usr/src/app/messaging
+            - ./tests:/usr/src/app/tests

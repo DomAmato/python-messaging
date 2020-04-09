@@ -19,7 +19,6 @@
 
 from unittest import TestCase
 from messaging.sms.gsm0338 import is_valid_gsm, decoding_map # imports GSM7 codec
-from messaging.sms.gsm0338old import def_regular_decode_dict
 # Reversed from: ftp://ftp.unicode.org/Public/MAPPINGS/ETSI/GSM0338.TXT
 MAP = {
 #    chr(0x0000): (0x0000, 0x00),  # Null
@@ -191,16 +190,12 @@ BAD = -1
 
 class TestEncodingFunctions(TestCase):
 
-    def test_mappings_are_same(self):
-        translated_dict =  dict((hex(k), ord(v)) for k, v in def_regular_decode_dict.items())
-        self.assertDictEqual(decoding_map, translated_dict)
-
     def test_encoding_supported_unicode_gsm(self):
 
         for key in list(MAP.keys()):
             # Use 'ignore' so that we see the code tested, not an exception
             s_gsm = key.encode('gsm0338', 'ignore')
-
+            print(s_gsm)
             if len(s_gsm) == 1:
                 i_gsm = s_gsm
             elif len(s_gsm) == 2:
