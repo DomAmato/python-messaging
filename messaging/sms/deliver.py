@@ -180,7 +180,10 @@ class SmsDeliver(SmsBase):
             print(unpack_msg(msg))
             print(unpack_msg(msg)[headlen:msgl])
             print(unpack_msg2(data))
-            #self.text = unpack_msg2(data).decode("gsm0338")
+            try:
+                self.text = unpack_msg2(data).decode("gsm0338")
+            except UnicodeError:
+                print('Unable To decode msg2')
             self.text = unpack_msg(msg)[headlen:msgl].decode("gsm0338")
 
         elif self.fmt == 0x04:

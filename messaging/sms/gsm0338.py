@@ -257,7 +257,7 @@ def decode(input_, errors='strict'):
             except KeyError:
                 # error handling: unassigned byte, must be > 0x7f
                 if errors == 'strict':
-                    raise UnicodeError("Unrecognized GSM character")
+                    raise UnicodeError("Unrecognized GSM character %s" % c)
                 elif errors == 'replace':
                     result.append('?')
                 elif errors == 'ignore':
