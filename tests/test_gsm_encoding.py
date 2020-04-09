@@ -195,9 +195,8 @@ class TestEncodingFunctions(TestCase):
         for key in list(MAP.keys()):
             # Use 'ignore' so that we see the code tested, not an exception
             s_gsm = key.encode('gsm0338', 'ignore')
-            print(s_gsm)
             if len(s_gsm) == 1:
-                i_gsm = s_gsm
+                i_gsm = ord(s_gsm)
             elif len(s_gsm) == 2:
                 i_gsm = (s_gsm[0] << 8) + s_gsm[1]
             else:
@@ -215,11 +214,10 @@ class TestEncodingFunctions(TestCase):
         for key in list(GREEK_MAP.keys()):
             # Use 'replace' so that we trigger the mapping
             s_gsm = key.encode('gsm0338', 'replace')
-
             if len(s_gsm) != 1:
                 s_gsm = BAD  # so we see the comparison, not an exception
 
-            self.assertEqual(GREEK_MAP[key][1], s_gsm)
+            self.assertEqual(GREEK_MAP[key][1], ord(s_gsm))
 
     def test_encoding_supported_quirk_unicode_gsm(self):
         # Note: Conversion is one way, hence no corresponding decode test
@@ -227,22 +225,19 @@ class TestEncodingFunctions(TestCase):
         for key in list(QUIRK_MAP.keys()):
             # Use 'replace' so that we trigger the mapping
             s_gsm = key.encode('gsm0338', 'replace')
-
             if len(s_gsm) != 1:
                 s_gsm = BAD  # so we see the comparison, not an exception
 
-            self.assertEqual(QUIRK_MAP[key][1], s_gsm)
+            self.assertEqual(QUIRK_MAP[key][1], ord(s_gsm))
 
     def test_decoding_supported_unicode_gsm(self):
         for key in list(MAP.keys()):
             i_gsm = MAP[key][1]
             if i_gsm <= 0xff:
-                s_gsm = chr(i_gsm)
+                s_unicode = bytes([i_gsm]).decode('gsm0338')
             elif i_gsm <= 0xffff:
-                s_gsm = chr((i_gsm & 0xff00) >> 8)
-                s_gsm += chr(i_gsm & 0x00ff)
+                s_unicode = bytes([((i_gsm & 0xff00) >> 8), i_gsm & 0x00ff]).decode('gsm0338')
 
-            s_unicode = s_gsm.encode('gsm0338')
             self.assertEqual(MAP[key][0], ord(s_unicode))
 
     def test_is_valid_gsm_true(self):

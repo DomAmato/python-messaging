@@ -307,6 +307,8 @@ class SmsSubmit(SmsBase):
         sms_ref &= 0xFF
 
         for i, msg in enumerate(msgs):
+            if isinstance(msg, bytes):
+                msg = msg.decode()
             i += 1
             total_parts = len(msgs)
             if limit == consts.SEVENBIT_SIZE:

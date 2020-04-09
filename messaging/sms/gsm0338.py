@@ -1,3 +1,4 @@
+# Refactored using cleaner code from
 # https://github.com/jezeniel/smsutil/blob/master/smsutil/codecs.py
 import codecs
 from array import array
@@ -152,29 +153,82 @@ GSM_EXT_CHARSET = {
     '\x1B\x65': '\u20AC',  # EURO SIGN
 }
 
+# Replacement characters, default is question mark. Used when it is not too
+# important to ensure exact UTF-8 -> GSM -> UTF-8 equivilence, such as when
+# humans read and write SMS. But for USSD and other M2M applications it's
+# important to ensure the conversion is exact.
+GSM_REPLACE_CHARSET = {
+    '\u00E7': '\x09',  # LATIN SMALL LETTER C WITH CEDILLA
+
+    '\u0391': '\x41',  # GREEK CAPITAL LETTER ALPHA
+    '\u0392': '\x42',  # GREEK CAPITAL LETTER BETA
+    '\u0395': '\x45',  # GREEK CAPITAL LETTER EPSILON
+    '\u0397': '\x48',  # GREEK CAPITAL LETTER ETA
+    '\u0399': '\x49',  # GREEK CAPITAL LETTER IOTA
+    '\u039A': '\x4B',  # GREEK CAPITAL LETTER KAPPA
+    '\u039C': '\x4D',  # GREEK CAPITAL LETTER MU
+    '\u039D': '\x4E',  # GREEK CAPITAL LETTER NU
+    '\u039F': '\x4F',  # GREEK CAPITAL LETTER OMICRON
+    '\u03A1': '\x50',  # GREEK CAPITAL LETTER RHO
+    '\u03A4': '\x54',  # GREEK CAPITAL LETTER TAU
+    '\u03A7': '\x58',  # GREEK CAPITAL LETTER CHI
+    '\u03A5': '\x59',  # GREEK CAPITAL LETTER UPSILON
+    '\u0396': '\x5A',  # GREEK CAPITAL LETTER ZETA
+}
+
 GSM_CHARSET = {**GSM_BASIC_CHARSET, **GSM_EXT_CHARSET}
+
+QUESTION_MARK = ord('\u003F')
+ESCAPE = ord('\x1B')
+SPACE = ord('\u00A0')
 
 decoding_map = dict((ord(k), ord(v)) if len(k) == 1 else (bytes([ord(k[0]), ord(k[1])]), ord(v)) for k, v in GSM_CHARSET.items())
 
-encoding_map = codecs.make_encoding_map(decoding_map)
+encoding_map = dict((ord(v), ord(k)) for k, v in GSM_BASIC_CHARSET.items())
 
+ext_encoding_map = dict((ord(v), ord(k[1])) for k, v in GSM_EXT_CHARSET.items())
+
+replace_encode_map = dict((ord(k), ord(v)) for k, v in GSM_REPLACE_CHARSET.items())
+
+def encode_gsm0338(text, errors, encoding_map, ext_encoding_map, replace_encode_map):
+    encoded = b''
+    for char in text:
+        ochar = ord(char)
+        ec = b''
+        if ochar in encoding_map:
+            ec = encoding_map.get(ochar)
+        else:
+            if ochar in ext_encoding_map:
+                encoded += bytes([ESCAPE])
+                ec = ext_encoding_map.get(ochar)
+            elif errors == 'strict':
+                raise UnicodeError("Invalid GSM character")
+            elif errors == 'replace':
+                ec = replace_encode_map.get(ochar, QUESTION_MARK)
+                print("replacing char %s with %s" % (char, ec))
+            elif errors == 'ignore':
+                pass
+            else:
+                raise UnicodeError("Unknown error handling")
+        if isinstance(ec, int):
+            ec = bytes([ec])
+        encoded += ec
+    return encoded, len(encoded)
 
 def decode_gsm0338(text, decoding_map):
-    ESCAPE = ord('\x1b')
-    SPACE = ord(' ')
     decoded = ''
     skip = None
     for index, char in enumerate(bytes(text)):
-        next = index + 1
+        next_char = index + 1
         if skip == index:
             continue
         if char != ESCAPE:
             d = decoding_map.get(char)
-        elif char == ESCAPE and next < len(text):
-            ext_char = bytes([ESCAPE, text[next]])
+        elif char == ESCAPE and next_char < len(text):
+            ext_char = bytes([ESCAPE, text[next_char]])
             d = decoding_map.get(ext_char, SPACE)
             if d != SPACE:
-                skip = next
+                    skip = next_char
         else:
             d = SPACE
         decoded += chr(d)
@@ -182,21 +236,21 @@ def decode_gsm0338(text, decoding_map):
 
 
 class GSM0338Codec(codecs.Codec):
-    def encode(self, input, errors='strict'):
-        return codecs.charmap_encode(input, errors, encoding_map)
+    def encode(self, input_, errors='strict'):
+        return encode_gsm0338(input_, errors, encoding_map, ext_encoding_map, replace_encode_map)
 
-    def decode(self, input, errors='strict'):
-        return decode_gsm0338(input, decoding_map)
+    def decode(self, input_, errors='strict'):
+        return decode_gsm0338(input_, decoding_map)
 
 
 class GSM0338IncrementalEncoder(codecs.IncrementalEncoder):
-    def encode(self, input, final=False):
-        return codecs.charmap_encode(input, self.errors, encoding_map)[0]
+    def encode(self, input_, final=False):
+        return encode_gsm0338(input_, self.errors, encoding_map, ext_encoding_map, replace_encode_map)[0]
 
 
 class GSM0338IncrementalDecoder(codecs.IncrementalDecoder):
-    def decode(self, input, final=False):
-        return decode_gsm0338(input, decoding_map)[0]
+    def decode(self, input_, final=False):
+        return decode_gsm0338(input_, decoding_map)[0]
 
 
 class GSM0338StreamReader(GSM0338Codec, codecs.StreamReader):

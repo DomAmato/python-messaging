@@ -45,9 +45,9 @@ class FixedOffset(tzinfo):
 
 
 def bytes_to_str(b):
-    if isinstance(b, str):
-        return b.encode('latin1')
-    return b.decode('latin1')
+    if isinstance(b, bytes):
+        return b.decode('latin1')
+    return b
 
 
 def to_array(pdu):
@@ -143,6 +143,8 @@ def pack_8bits_to_7bits(message, udh=None):
 def pack_8bits_to_8bit(message, udh=None):
     text = message
     if udh is not None:
+        if isinstance(udh, bytes):
+            udh = udh.decode()
         text = udh + text
 
     mlen = len(text)
@@ -156,6 +158,8 @@ def pack_8bits_to_ucs2(message, udh=None):
     nmesg = ''
 
     if udh is not None:
+        if isinstance(udh, bytes):
+            udh = udh.decode()
         text = udh + text
 
     for n in text:
