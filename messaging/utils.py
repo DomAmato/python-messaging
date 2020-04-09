@@ -46,10 +46,7 @@ class FixedOffset(tzinfo):
 
 
 def bytes_to_str(b):
-    if sys.version_info >= (3,):
-        return codecs.decode(b, 'latin1')
-
-    return b
+    return codecs.encode(b, 'latin1')
 
 
 def to_array(pdu):
@@ -57,10 +54,7 @@ def to_array(pdu):
 
 
 def to_bytes(s):
-    if sys.version_info >= (3,):
-        return bytes(s)
-
-    return ''.join(map(chr, s))
+    return bytes(s)
 
 
 def debug(s):
