@@ -192,7 +192,8 @@ BAD = -1
 class TestEncodingFunctions(TestCase):
 
     def test_mappings_are_same(self):
-        self.assertDictEqual(decoding_map, def_regular_decode_dict)
+        translated_dict =  dict((hex(k), ord(v)) for k, v in def_regular_decode_dict.items())
+        self.assertDictEqual(decoding_map, translated_dict)
 
     def test_encoding_supported_unicode_gsm(self):
 
@@ -201,9 +202,9 @@ class TestEncodingFunctions(TestCase):
             s_gsm = key.encode('gsm0338', 'ignore')
 
             if len(s_gsm) == 1:
-                i_gsm = ord(s_gsm)
+                i_gsm = s_gsm
             elif len(s_gsm) == 2:
-                i_gsm = (ord(s_gsm[0]) << 8) + ord(s_gsm[1])
+                i_gsm = (s_gsm[0] << 8) + s_gsm[1]
             else:
                 i_gsm = BAD  # so we see the comparison, not an exception
 
@@ -220,12 +221,10 @@ class TestEncodingFunctions(TestCase):
             # Use 'replace' so that we trigger the mapping
             s_gsm = key.encode('gsm0338', 'replace')
 
-            if len(s_gsm) == 1:
-                i_gsm = ord(s_gsm)
-            else:
-                i_gsm = BAD  # so we see the comparison, not an exception
+            if len(s_gsm) != 1:
+                s_gsm = BAD  # so we see the comparison, not an exception
 
-            self.assertEqual(GREEK_MAP[key][1], i_gsm)
+            self.assertEqual(GREEK_MAP[key][1], s_gsm)
 
     def test_encoding_supported_quirk_unicode_gsm(self):
         # Note: Conversion is one way, hence no corresponding decode test
@@ -234,12 +233,10 @@ class TestEncodingFunctions(TestCase):
             # Use 'replace' so that we trigger the mapping
             s_gsm = key.encode('gsm0338', 'replace')
 
-            if len(s_gsm) == 1:
-                i_gsm = ord(s_gsm)
-            else:
-                i_gsm = BAD  # so we see the comparison, not an exception
+            if len(s_gsm) != 1:
+                s_gsm = BAD  # so we see the comparison, not an exception
 
-            self.assertEqual(QUIRK_MAP[key][1], i_gsm)
+            self.assertEqual(QUIRK_MAP[key][1], s_gsm)
 
     def test_decoding_supported_unicode_gsm(self):
         for key in list(MAP.keys()):
@@ -265,5 +262,5 @@ class TestEncodingFunctions(TestCase):
         for i in range(1, 0xffff + 1):
             if chr(i) not in MAP:
                 # Note: it's a little odd, but on error we want to see values
-                if is_valid_gsm(chr(i)) is not False:
+                if is_valid_gsm(chr(i)):
                     self.assertEqual(BAD, i)
