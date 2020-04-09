@@ -173,7 +173,13 @@ class SmsDeliver(SmsBase):
 
         if self.fmt == 0x00:
             # XXX: Use unpack_msg2
+            print(data)
             data = data[ud_len:].tolist()
+            print(data)
+            print(msg)
+            print(unpack_msg(msg))
+            print(unpack_msg(msg)[headlen:msgl])
+            print(unpack_msg2(data))
             #self.text = unpack_msg2(data).decode("gsm0338")
             self.text = unpack_msg(msg)[headlen:msgl].decode("gsm0338")
 

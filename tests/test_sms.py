@@ -149,7 +149,7 @@ class TestSmsSubmit(TestCase):
     def test_encoding_message_with_latin1_chars(self):
         # tested with pduspy.exe
         number = binascii.unhexlify(b'2b3334363534313233343536').decode()
-        text = u"Hölä"
+        text = "Hölä"
         expected = "0011000B914356143254F60000AA04483E7B0F"
 
         sms = SmsSubmit(number, text)
@@ -161,7 +161,7 @@ class TestSmsSubmit(TestCase):
 
         # tested with pduspy.exe
         number = binascii.unhexlify(b'2b3334363534313233343536').decode()
-        text = u"BÄRÇA äñ@"
+        text = "BÄRÇA äñ@"
         expected = "0001000B914356143254F6000009C2AD341104EDFB00"
 
         sms = SmsSubmit(number, text)
@@ -197,7 +197,7 @@ class TestSmsSubmit(TestCase):
         pdu = sms.to_pdu()[0]
         self.assertEqual(pdu.pdu, expected)
 
-        text = u"Русский"
+        text = "Русский"
         number = binascii.unhexlify(b'363535333435363738').decode()
         expected = "001100098156355476F80008AA0E0420044304410441043A04380439"
 
@@ -329,7 +329,7 @@ class TestSmsDeliver(TestCase):
 
     def test_decoding_ucs2_pdu(self):
         pdu = "07914306073011F0040B914316709807F2000880604290224080084E2D5174901A8BAF"
-        text = u"中兴通讯"
+        text = "中兴通讯"
         csca = "+34607003110"
         number = binascii.unhexlify(b'2b3334363130373839373032').decode()
 
@@ -413,8 +413,8 @@ class TestSmsDeliver(TestCase):
             "07919471227210244405852122F039F1015062712181804F050003190202E4E8309B5E7683DAFC319A5E76B340F73D9A5D7683A6E93268FD9ED3CB6EF67B0E5AD172B19B2C2693C9602E90355D6683A6F0B007946E8382F5393BEC26BB00",
         ]
         texts = [
-            u"Lieber Vodafone-Kunde, mit Ihrer nationalen Tarifoption zahlen Sie in diesem Netz 3,45 € pro MB plus 59 Ct pro Session. Wenn Sie diese Info nicht mehr e",
-            u"rhalten möchten, wählen Sie kostenlos +4917212220. Viel Spaß im Ausland.",
+            "Lieber Vodafone-Kunde, mit Ihrer nationalen Tarifoption zahlen Sie in diesem Netz 3,45 € pro MB plus 59 Ct pro Session. Wenn Sie diese Info nicht mehr e",
+            "rhalten möchten, wählen Sie kostenlos +4917212220. Viel Spaß im Ausland.",
         ]
 
         for i, sms in enumerate(map(SmsDeliver, pdus)):
