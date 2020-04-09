@@ -106,8 +106,8 @@ def pack_8bits_to_7bits(message, udh=None):
                 c += 1
 
             shift = n % 7
-            lb = ord(txt[c]) >> shift
-            hb = (ord(txt[c + 1]) << (7 - shift) & 255)
+            lb = txt[c] >> shift
+            hb = (txt[c + 1] << (7 - shift) & 255)
             op[n] = lb + hb
             c += 1
 
@@ -126,8 +126,8 @@ def pack_8bits_to_7bits(message, udh=None):
                 c += 1
 
             shift = n % 7
-            lb = ord(txt[c]) >> shift
-            hb = (ord(txt[c + 1]) << (7 - shift) & 255)
+            lb = txt[c] >> shift
+            hb = (txt[c + 1] << (7 - shift) & 255)
             op[n] = lb + hb
             c += 1
 
