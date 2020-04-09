@@ -271,7 +271,7 @@ def decode(input_, errors='strict'):
 
 # encodings module API
 def getregentry(encoding):
-    if encoding == 'gsm0338':
+    if encoding in ('gsm0338', 'gsm7'):
         return codecs.CodecInfo(name='gsm0338',
                                 encode=encode,
                                 decode=decode)
@@ -283,7 +283,7 @@ codecs.register(getregentry)
 def is_gsm_text(text):
     """Returns True if ``text`` can be encoded as gsm text"""
     try:
-        codec.encode(text, "gsm0338")
+        codec.encode(text, 'gsm0338')
     except UnicodeError:
         return False
     except:
