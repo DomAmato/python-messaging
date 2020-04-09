@@ -248,7 +248,7 @@ class TestEncodingFunctions(TestCase):
                 s_gsm = chr((i_gsm & 0xff00) >> 8)
                 s_gsm += chr(i_gsm & 0x00ff)
 
-            s_unicode = codecs.encode(s_gsm, 'gsm0338', 'strict')
+            s_unicode = codecs.decode(s_gsm, 'gsm0338', 'strict')
             self.assertEqual(MAP[key][0], ord(s_unicode))
 
     def test_is_gsm_text_true(self):
