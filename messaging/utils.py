@@ -96,7 +96,7 @@ def pack_8bits_to_7bits(message, udh=None):
 
     if udh is None:
         tl = len(txt)
-        txt += '\x00'
+        txt += b'\x00'
         msgl = int(len(txt) * 7 / 8)
         op = [-1] * msgl
         c = shift = 0
@@ -113,10 +113,10 @@ def pack_8bits_to_7bits(message, udh=None):
 
         pdu = chr(tl) + ''.join(map(chr, op))
     else:
-        txt = "\x00\x00\x00\x00\x00\x00" + txt
+        txt = b"\x00\x00\x00\x00\x00\x00" + txt
         tl = len(txt)
 
-        txt += '\x00'
+        txt += b'\x00'
         msgl = int(len(txt) * 7 / 8)
         op = [-1] * msgl
         c = shift = 0
