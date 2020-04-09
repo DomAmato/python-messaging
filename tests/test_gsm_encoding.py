@@ -19,7 +19,7 @@
 
 from unittest import TestCase
 import codecs
-from messaging.sms.gsm0338 import is_gsm_text # imports GSM7 codec
+from messaging.sms.gsm0338 import is_valid_gsm # imports GSM7 codec
 
 # Reversed from: ftp://ftp.unicode.org/Public/MAPPINGS/ETSI/GSM0338.TXT
 MAP = {
@@ -251,17 +251,17 @@ class TestEncodingFunctions(TestCase):
             s_unicode = codecs.decode(s_gsm, 'gsm0338')
             self.assertEqual(MAP[key][0], ord(s_unicode))
 
-    def test_is_gsm_text_true(self):
+    def test_is_valid_gsm_true(self):
         for key in list(MAP.keys()):
             if key == chr(0x00a0):
                 continue
-            self.assertTrue(is_gsm_text(key))
+            self.assertTrue(is_valid_gsm(key))
 
-    def test_is_gsm_text_false(self):
-        self.assertFalse(is_gsm_text(chr(0x00a0)))
+    def test_is_valid_gsm_false(self):
+        self.assertFalse(is_valid_gsm(chr(0x00a0)))
 
         for i in range(1, 0xffff + 1):
             if chr(i) not in MAP:
                 # Note: it's a little odd, but on error we want to see values
-                if is_gsm_text(chr(i)) is not False:
+                if is_valid_gsm(chr(i)) is not False:
                     self.assertEqual(BAD, i)

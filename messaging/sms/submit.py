@@ -12,7 +12,7 @@ from messaging.utils import (debug, encode_str, clean_number,
                              timedelta_to_relative_validity,
                              datetime_to_absolute_validity)
 from messaging.sms.base import SmsBase
-from messaging.sms.gsm0338 import is_gsm_text
+from messaging.sms.gsm0338 import is_valid_gsm
 from messaging.sms.pdu import Pdu
 
 VALID_NUMBER = re.compile("^\+?\d{3,20}$")
@@ -205,7 +205,7 @@ class SmsSubmit(SmsBase):
     def _get_msg_pdu(self):
         # Data coding scheme
         if self.fmt is None:
-            if is_gsm_text(self.text):
+            if is_valid_gsm(self.text):
                 self.fmt = 0x00
             else:
                 self.fmt = 0x08
