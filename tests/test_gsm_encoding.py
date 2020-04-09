@@ -157,7 +157,7 @@ MAP = {
     '¡': (0x00a1, 0x40),
     '/': (0x002f, 0x2f),
     'o': (0x006f, 0x6f),
-    '': (0x0075, 0x75),
+    'u': (0x0075, 0x75),
     'w': (0x0077, 0x77),
     'y': (0x0079, 0x79),
     'e': (0x0065, 0x65),
@@ -206,9 +206,6 @@ class TestEncodingFunctions(TestCase):
                 i_gsm = BAD  # so we see the comparison, not an exception
 
             # We shouldn't generate an invalid escape sequence
-            print(i_gsm)
-            print(MAP)
-            print(MAP[key])
             if key == chr(0x00a0):
                 self.assertEqual(BAD, i_gsm)
             else:
