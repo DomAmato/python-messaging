@@ -15,6 +15,7 @@ from __future__ import with_statement
 import array
 import os
 import random
+import logging
 
 from messaging.mms import message, wsp_pdu
 from messaging.mms.iterator import PreviewIterator
@@ -166,7 +167,7 @@ class MMSDecoder(wsp_pdu.Decoder):
         except StopIteration:
             return
 
-        #print('Number of data entries (parts) in MMS body:', num_entries)
+        logging.debug('Number of data entries (parts) in MMS body: %i' % num_entries)
 
         ########## MMS body: entries ##########
         # For every data "part", we have to read the following sequence:
@@ -175,7 +176,7 @@ class MMSDecoder(wsp_pdu.Decoder):
         # <content-type + other possible headers>,
         # <data>
         for part_num in range(num_entries):
-            #print('\nPart %d:\n------' % part_num)
+            logging.debug('\nPart %d:\n------' % part_num)
             headers_len = self.decode_uint_var(data_iter)
             data_len = self.decode_uint_var(data_iter)
 
