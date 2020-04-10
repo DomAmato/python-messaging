@@ -16,7 +16,6 @@ import array
 import os
 import random
 
-from messaging.utils import debug
 from messaging.mms import message, wsp_pdu
 from messaging.mms.iterator import PreviewIterator
 
@@ -320,7 +319,7 @@ class MMSDecoder(wsp_pdu.Decoder):
                 raise Exception('encoded_string_value decoding error - '
                                 'Could not decode Charset value: %s' % e)
 
-            return wsp_pdu.Decoder.decode_text_string(byte_iter)
+            return wsp_pdu.Decoder.decode_text_string(byte_iter, charset)
         except wsp_pdu.DecodeError:
             # Fall back on just "Text-string"
             return wsp_pdu.Decoder.decode_text_string(byte_iter)
@@ -753,8 +752,7 @@ class MMSEncoder(wsp_pdu.Encoder):
         for page in self._mms_message._pages:
             num_entries += page.number_of_parts()
 
-        for data_part in self._mms_message._data_parts:
-            num_entries += 1
+        num_entries += len(self._mms_message._data_parts)
 
         message_body.extend(self.encode_uint_var(num_entries))
 
@@ -848,7 +846,7 @@ class MMSEncoder(wsp_pdu.Encoder):
                     raise wsp_pdu.EncodeError('Error encoding parameter '
                                               'value: %s' % e)
                 except:
-                    debug('A fatal error occurred, probably due to an '
+                    logging.error('A fatal error occurred, probably due to an '
                           'unimplemented encoding operation')
                     raise
 

@@ -15,9 +15,7 @@ Functions
 
 .. autofunction:: bytes_to_str
 
-.. autofunction:: to_array
-
-.. autofunction:: to_bytes
+.. autofunction:: hex_to_int_array
 
 .. autofunction:: swap
 

@@ -44,11 +44,11 @@ References used in the code and this document:
 
 import array
 from datetime import datetime
+import logging
 
-from messaging.utils import debug
 from messaging.mms.iterator import PreviewIterator
 
-wsp_pdu_types = {
+WSP_PDU_TYPES = {
     0x01: 'Connect',
     0x02: 'ConnectReply',
     0x03: 'Redirect',
@@ -63,7 +63,7 @@ wsp_pdu_types = {
 }
 
 # Well-known parameter assignments ([5], table 38)
-well_known_parameters = {
+WELL_KNOWN_PARAMETERS = {
     0x00: ('Q', 'q_value'),
     0x01: ('Charset', 'well_known_charset'),
     0x02: ('Level', 'version_value'),
@@ -97,7 +97,7 @@ well_known_parameters = {
 
 
 # Content type assignments ([5], table 40)
-well_known_content_types = [
+WELL_KNOWN_CONTENT_TYPES = [
     '*/*', 'text/*', 'text/html', 'text/plain',
     'text/x-hdml', 'text/x-ttml', 'text/x-vCalendar',
     'text/x-vCard', 'text/vnd.wap.wml',
@@ -164,7 +164,7 @@ well_known_content_types = [
 # Note that the assigned number is the same as the IANA MIBEnum value
 # "gsm-default-alphabet" is not included, as it is not assigned any
 # value in [5]. Also note, this is by no means a complete list
-well_known_charsets = {
+WELL_KNOWN_CHARSETS = {
     0x07EA: 'big5',
     0x03E8: 'iso-10646-ucs-2',
     0x04: 'iso-8859-1',
@@ -182,7 +182,7 @@ well_known_charsets = {
 }
 
 # Header Field Name assignments ([5], table 39)
-header_field_names = [
+HEADER_FIELD_NAMES = [
     'Accept', 'Accept-Charset', 'Accept-Encoding',
     'Accept-Language', 'Accept-Ranges', 'Age',
     'Allow', 'Authorization', 'Cache-Control',
@@ -214,11 +214,11 @@ header_field_names = [
 ]
 
 
-# TODO: combine this dict with the header_field_names table (same as well
+# TODO: combine this dict with the HEADER_FIELD_NAMES table (same as well
 # known parameter assignments)
 # Temporary fix to allow different types of header field values to be
 # dynamically decoded
-header_field_encodings = {'Accept': 'accept_value', 'Pragma': 'pragma_value'}
+HEADER_FIELD_ENCODINGS = {'Accept': 'accept_value', 'Pragma': 'pragma_value'}
 
 
 def get_header_field_names(version='1.2'):
@@ -243,7 +243,7 @@ def get_header_field_names(version='1.2'):
 
     version = int(version.split('.')[1])
 
-    versioned_field_names = header_field_names[:]
+    versioned_field_names = HEADER_FIELD_NAMES[:]
     if version == 3:
         versioned_field_names = versioned_field_names[:0x44]
     elif version == 2:
@@ -281,7 +281,7 @@ def get_well_known_parameters(version='1.2'):
     else:
         version = int(version.split('.')[1])
 
-    versioned_params = well_known_parameters.copy()
+    versioned_params = WELL_KNOWN_PARAMETERS.copy()
     if version <= 3:
         for assigned_number in range(0x11, 0x1e):
             del versioned_params[assigned_number]
@@ -454,7 +454,7 @@ class Decoder:
         return longInt
 
     @staticmethod
-    def decode_text_string(byte_iter):
+    def decode_text_string(byte_iter, encoding = 'utf-8'):
         """
         Decodes the null-terminated, binary-encoded string value starting
         at the byte pointed to by ``byte_iter``.
@@ -473,17 +473,22 @@ class Decoder:
         :return: The decoded text string
         :rtype: str
         """
-        decoded_string = ''
+        b_decoded_string = b''
         byte = next(byte_iter)
         # Remove Quote character (octet 127), if present
         if byte == 127:
             byte = next(byte_iter)
 
         while byte != 0x00:
-            decoded_string += chr(byte)
+            b_decoded_string += bytes([byte])
             byte = next(byte_iter)
 
-        return decoded_string
+        try:
+            # Lets try to decode it to the given encoding
+            # if that fails we probably have characters that need to be escaped
+            return b_decoded_string.decode(encoding)
+        except UnicodeError:
+            return b_decoded_string.decode("unicode_escape")
 
     @staticmethod
     def decode_quoted_string(byte_iter):
@@ -759,7 +764,7 @@ class Decoder:
                               'integer value representing it')
 
         try:
-            return well_known_content_types[value]
+            return WELL_KNOWN_CONTENT_TYPES[value]
         except IndexError:
             raise DecodeError('Invalid well-known media: could not '
                               'find content type in table of assigned values')
@@ -809,7 +814,7 @@ class Decoder:
 
         if isinstance(media_value, int):
             try:
-                return well_known_content_types[media_value]
+                return WELL_KNOWN_CONTENT_TYPES[media_value]
             except IndexError:
                 raise DecodeError('Invalid constrained media: could not '
                                   'find well-known content type')
@@ -901,7 +906,7 @@ class Decoder:
         except DecodeError as e:
             raise DecodeError('Could not decode Typed-parameter: %s' % e)
         except:
-            debug('A fatal error occurred, probably due to an '
+            logging.error('A fatal error occurred, probably due to an '
                   'unimplemented decoding operation')
             raise
 
@@ -1290,8 +1295,8 @@ class Decoder:
             decoded_charset = '*'
         else:
             charset_value = Decoder.decode_integer_value(byte_iter)
-            if charset_value in well_known_charsets:
-                decoded_charset = well_known_charsets[charset_value]
+            if charset_value in WELL_KNOWN_CHARSETS:
+                decoded_charset = WELL_KNOWN_CHARSETS[charset_value]
             else:
                 # This charset is not in our table... so just use the
                 # value (at least for now)
@@ -1328,15 +1333,15 @@ class Decoder:
         # decode_application_header also
         # Currently we decode most headers as text_strings, except
         # where we have a specific decoding algorithm implemented
-        if field_name in header_field_encodings:
-            wap_value_type = header_field_encodings[field_name]
+        if field_name in HEADER_FIELD_ENCODINGS:
+            wap_value_type = HEADER_FIELD_ENCODINGS[field_name]
             try:
                 decoded_value = getattr(Decoder,
                                        'decode_%s' % wap_value_type)(byte_iter)
             except DecodeError as e:
                 raise DecodeError('Could not decode Wap-value: %s' % e)
             except:
-                debug('An error occurred, probably due to an '
+                logging.error('An error occurred, probably due to an '
                       'unimplemented decoding operation. Tried to '
                       'decode header: %s' % field_name)
                 raise
@@ -1372,6 +1377,7 @@ class Decoder:
             app_header = Decoder.decode_text_string(byte_iter)
 
         app_specific_value = Decoder.decode_text_string(byte_iter)
+
         return app_header, app_specific_value
 
     @staticmethod
@@ -1606,10 +1612,10 @@ class Encoder:
                  values
         :rtype: list
         """
-        if content_type in well_known_content_types:
+        if content_type in WELL_KNOWN_CONTENT_TYPES:
             # Short-integer encoding
             val = Encoder.encode_short_integer(
-                    well_known_content_types.index(content_type))
+                    WELL_KNOWN_CONTENT_TYPES.index(content_type))
         else:
             val = Encoder.encode_text_string(content_type)
 
@@ -1667,7 +1673,7 @@ class Encoder:
                 except EncodeError as e:
                     raise EncodeError('Error encoding param value: %s' % e)
                 except:
-                    debug('A fatal error occurred, probably due to an '
+                    logging.error('A fatal error occurred, probably due to an '
                           'unimplemented encoding operation')
                     raise
                 break
@@ -1794,15 +1800,15 @@ class Encoder:
         # TODO: make this flow better (see also Decoder.decode_header)
         # most header values are encoded as text_strings, except where we
         # have a specific Wap-value encoding implementation
-        if field_name in header_field_encodings:
-            wap_value_type = header_field_encodings[field_name]
+        if field_name in HEADER_FIELD_ENCODINGS:
+            wap_value_type = HEADER_FIELD_ENCODINGS[field_name]
             try:
                 ret = getattr(Encoder, 'encode_%s' % wap_value_type)(value)
                 encoded_header.extend(ret)
             except EncodeError as e:
                 raise EncodeError('Error encoding Wap-value: %s' % e)
             except:
-                debug('A fatal error occurred, probably due to an '
+                logging.error('A fatal error occurred, probably due to an '
                       'unimplemented encoding operation')
                 raise
         else:
@@ -1858,8 +1864,8 @@ class Encoder:
         :rtype: list
         """
         # See if this value is in the table of well-known content types
-        if media_type in well_known_content_types:
-            value = well_known_content_types.index(media_type)
+        if media_type in WELL_KNOWN_CONTENT_TYPES:
+            value = WELL_KNOWN_CONTENT_TYPES.index(media_type)
         else:
             value = media_type
 

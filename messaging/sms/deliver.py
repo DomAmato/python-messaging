@@ -2,9 +2,10 @@
 """Classes for processing received SMS"""
 
 from datetime import datetime, timedelta
+import logging
 
-from messaging.utils import (swap, swap_number, encode_bytes, debug,
-                             unpack_msg, unpack_msg2, to_array)
+from messaging.utils import (swap, swap_number, encode_bytes,
+                             unpack_msg, hex_to_int_array)
 from messaging.sms import consts
 from messaging.sms.base import SmsBase
 from messaging.sms.udh import UserDataHeader
@@ -65,7 +66,7 @@ class SmsDeliver(SmsBase):
         # XXX: Should we keep the original PDU or the modified one?
         self._pdu = pdu
 
-        data = to_array(self._pdu)
+        data = hex_to_int_array(self._pdu)
 
         # Service centre address
         smscl = data.pop(0)
@@ -106,7 +107,7 @@ class SmsDeliver(SmsBase):
         sndtype = (data.pop(0) >> 4) & 0x07
         if sndtype == consts.ALPHANUMERIC:
             # coded according to 3GPP TS 23.038 [9] GSM 7-bit default alphabet
-            sender = unpack_msg2(data[:sndlen]).decode("gsm0338")
+            sender = unpack_msg(data[:sndlen]).decode("gsm0338")
         else:
             # Extract phone number of sender
             sender = swap_number(encode_bytes(data[:sndlen]))
@@ -172,11 +173,7 @@ class SmsDeliver(SmsBase):
             headlen = int(headlen)
 
         if self.fmt == 0x00:
-            # XXX: Use unpack_msg2
-
-            data = data[ud_len:].tolist()
-            
-            self.text = unpack_msg2(data).decode("gsm0338")
+            self.text = unpack_msg(msg)[headlen:msgl].decode("gsm0338")
 
         elif self.fmt == 0x04:
             self.text = data[ud_len:].tobytes()
@@ -210,7 +207,7 @@ class SmsDeliver(SmsBase):
             self.date = datetime.strptime(scts_str, "%y/%m/%d %H:%M:%S")
         except (ValueError, TypeError):
             scts_str = ''
-            debug('Could not decode scts: %s' % date)
+            logging.debug('Could not decode scts: %s' % date)
 
         data = data[7:]
 
@@ -221,7 +218,7 @@ class SmsDeliver(SmsBase):
         except (ValueError, TypeError):
             dt_str = ''
             dt = None
-            debug('Could not decode date: %s' % date)
+            logging.debug('Could not decode date: %s' % date)
 
         data = data[7:]
 

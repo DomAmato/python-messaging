@@ -322,7 +322,7 @@ class TestMmsDecoding(TestCase):
             'Date': datetime.datetime(2004, 5, 23, 14, 14, 58),
             'Content-Type': ('application/vnd.wap.multipart.related', {'Start': '<AAAA>', 'Type': 'application/smil'}),
             'Subject': 'Angående art-tillhörighet',
-            #'Subject': 'Ang\xc3\xa5ende art-tillh\xc3\xb6righet',
+            # 'Subject': 'Ang\xc3\xa5ende art-tillh\xc3\xb6righet',
         }
         smil_data = b'<smil><head><layout><root-layout height="240px" width="160px"/>\r\n<region id="Image" top="0" left="0" height="50%" width="100%" fit="hidden"/>\r\n<region id="Text" top="50%" left="0" height="50%" width="100%" fit="hidden"/>\r\n</layout>\r\n</head>\r\n<body><par dur="2000ms"><img src="Rain.wbmp" region="Image"></img>\r\n<text src="mms.txt" region="Text"></text>\r\n</par>\r\n</body>\r\n</smil>\r\n'
         text_data = b'Jonatan \xc3\xa4r en gnu.'

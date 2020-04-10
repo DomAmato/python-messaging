@@ -1,8 +1,10 @@
 from array import array
 from datetime import timedelta, tzinfo
 from math import floor
-import sys
+import re
+import binascii
 
+HEX_STR = re.compile(r"^[0-9A-Fa-f]+$")
 
 class FixedOffset(tzinfo):
     """Fixed offset in minutes east from UTC."""
@@ -46,22 +48,12 @@ class FixedOffset(tzinfo):
 
 def bytes_to_str(b):
     if isinstance(b, bytes):
-        return b.decode('latin1')
+        return b.decode()
     return b
 
 
-def to_array(pdu):
+def hex_to_int_array(pdu):
     return array('B', [int(pdu[i:i + 2], 16) for i in range(0, len(pdu), 2)])
-
-
-def to_bytes(s):
-    return bytes(s)
-
-
-def debug(s):
-    # set this to True if you want to poke at PDU encoding/decoding
-    if False:
-        print(s)
 
 
 def swap(s):
@@ -83,18 +75,33 @@ def clean_number(n):
 
 
 def encode_str(s):
-    """Returns the hexadecimal representation of ``s``"""
+    """
+    Convert a string to hexidecimal values
+
+    :param s: string
+    :type s: str
+    :return: hexidecimal representation of given string
+    :rtype: str
+    """
+    # return binascii.hexlify(s.encode()).decode()
     return ''.join(["%02x" % ord(n) for n in s])
 
 
 def encode_bytes(b):
-    return ''.join(["%02x" % n for n in b])
+    """
+    Convert to hexidecimal representation
+
+    :param b: byte array
+    :type b: bytes
+    :return: Byte string converted to hex and returned as a string
+    :rtype: str
+    """
+    return binascii.hexlify(b).decode()
 
 
 def pack_8bits_to_7bits(message, udh=None):
     pdu = ""
     txt = bytes_to_str(message)
-
     if udh is None:
         tl = len(txt)
         txt += '\x00'
@@ -169,15 +176,34 @@ def pack_8bits_to_ucs2(message, udh=None):
     message = chr(mlen) + nmesg
     return encode_str(message)
 
-
 def unpack_msg(pdu):
+    if isinstance(pdu, (array, list)):
+        return unpack_list_msg(pdu)
+    
+    if isinstance(pdu, bytes):
+        return unpack_hex_bytes_msg(pdu)
+    
+    if isinstance(pdu, str) and HEX_STR.match(pdu):
+        return unpack_hex_str_msg(pdu)
+    
+    raise TypeError('Unhandled Type %s' % type(pdu))
+
+def unpack_hex_str_msg(pdu):
     """Unpacks ``pdu`` into septets and returns the decoded string"""
     # Taken/modified from Dave Berkeley's pysms package
     count = last = 0
     result = []
 
-    for i in range(0, len(pdu), 2):
-        byte = int(pdu[i:i + 2], 16)
+    prev_char = ''
+    count = last = 0
+    result = []
+
+    for index, char in enumerate(pdu):
+        if index % 2 == 1:
+            byte = int(prev_char + char, 16)
+        else:
+            prev_char = char
+            continue
         mask = 0x7F >> count
         out = ((byte & mask) << count) + last
         last = byte >> (7 - count)
@@ -192,10 +218,43 @@ def unpack_msg(pdu):
 
         count = (count + 1) % 7
 
-    return to_bytes(result)
+    return bytes(result)
 
 
-def unpack_msg2(pdu):
+def unpack_hex_bytes_msg(pdu):
+    """Unpacks ``pdu`` into septets and returns the decoded string"""
+    # Taken/modified from Dave Berkeley's pysms package
+    count = last = 0
+    result = []
+
+    prev_byte = b''
+    count = last = 0
+    result = []
+
+    for index, byte in enumerate(pdu):
+        if index % 2 == 1:
+            byte = int(bytes([prev_byte, byte]), 16)
+        else:
+            prev_byte = byte
+            continue
+        mask = 0x7F >> count
+        out = ((byte & mask) << count) + last
+        last = byte >> (7 - count)
+        result.append(out)
+
+        if len(result) >= 0xa0:
+            break
+
+        if count == 6:
+            result.append(last)
+            last = 0
+
+        count = (count + 1) % 7
+
+    return bytes(result)
+
+
+def unpack_list_msg(pdu):
     """Unpacks ``pdu`` into septets and returns the decoded string"""
     # Taken/modified from Dave Berkeley's pysms package
     count = last = 0
@@ -216,7 +275,7 @@ def unpack_msg2(pdu):
 
         count = (count + 1) % 7
 
-    return to_bytes(result)
+    return bytes(result)
 
 
 def timedelta_to_relative_validity(t):

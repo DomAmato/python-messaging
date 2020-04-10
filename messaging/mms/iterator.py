@@ -40,8 +40,7 @@ class PreviewIterator:
         self.reset_preview()
         if len(self._cached_values) > 0:
             return self._cached_values.pop(0)
-        else:
-            return next(self._it)
+        return next(self._it)
 
     def preview(self):
         """

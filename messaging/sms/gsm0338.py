@@ -1,3 +1,17 @@
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
 # Refactored using cleaner code from
 # https://github.com/jezeniel/smsutil/blob/master/smsutil/codecs.py
 import codecs
@@ -180,7 +194,7 @@ GSM_CHARSET = {**GSM_BASIC_CHARSET, **GSM_EXT_CHARSET}
 
 QUESTION_MARK = ord('\u003F')
 ESCAPE = ord('\x1B')
-SPACE = ord('\u00A0')
+NBSP = ord('\u00A0')
 
 decoding_map = dict((ord(k), ord(v)) if len(k) == 1 else (bytes([ord(k[0]), ord(k[1])]), ord(v)) for k, v in GSM_CHARSET.items())
 
@@ -205,7 +219,6 @@ def encode_gsm0338(text, errors, encoding_map, ext_encoding_map, replace_encode_
                 raise UnicodeError("Invalid GSM character")
             elif errors == 'replace':
                 ec = replace_encode_map.get(ochar, QUESTION_MARK)
-                print("replacing char %s with %s" % (char, ec))
             elif errors == 'ignore':
                 pass
             else:
@@ -226,11 +239,11 @@ def decode_gsm0338(text, decoding_map):
             d = decoding_map.get(char)
         elif char == ESCAPE and next_char < len(text):
             ext_char = bytes([ESCAPE, text[next_char]])
-            d = decoding_map.get(ext_char, SPACE)
-            if d != SPACE:
-                    skip = next_char
+            d = decoding_map.get(ext_char, NBSP)
+            if d != NBSP:
+                skip = next_char
         else:
-            d = SPACE
+            d = NBSP
         decoded += chr(d)
     return decoded, len(decoded)
 
