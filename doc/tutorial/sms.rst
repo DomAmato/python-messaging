@@ -56,7 +56,7 @@ Setting the SMS class (0-3) is a no brainer::
     from messaging.sms import SmsSubmit
 
     sms = SmsSubmit("+44123231231", "hey how's it going?")
-    sms.class = 0
+    sms.klass = 0
     pdu = sms.to_pdu()[0]
 
     print(pdu.length, pdu.pdu)
